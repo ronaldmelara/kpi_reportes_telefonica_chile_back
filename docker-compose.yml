@@ -1,0 +1,22 @@
+version: "3"
+services:
+  spring-boot-service:
+    build:
+      context: .
+    ports:
+      - 8080:8080
+    environment:
+      DB_HOST: mysql-db-2
+      DB_NAME: kpi_tech
+      DB_USER: "root"
+      DB_PASSWORD : "123456789"
+
+
+  mysql-db-2:
+    image: mysql
+    ports:
+      - 3324:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456789"
+      MYSQL_DATABASE: kpi_tech
+      #... other properties
