@@ -87,7 +87,11 @@ public class DataProcessingService {
         List<Incidente> dataToUpdate = new ArrayList<>();
         for(TemporalIncidente dato: dataRaw){
 
-            boolean ticketExists = incidentesRepository.findByTicket(dato.getTicket()).isEmpty();
+            boolean ticketExists = incidentesRepository.findByTicket(dato.getTicket()).isPresent();
+
+            if(dato.getTicket().equals("INC000002623543")){
+                System.out.println("test");
+            }
 
             ServiciosISO ent1 = serviciosISORepository.findByServicio(StringUtils.trimToEmpty(dato.getServicio()));
             Impactos ent4 = impactoRepository.findByImpacto(StringUtils.trimToEmpty(dato.getImpacto()));
@@ -106,21 +110,22 @@ public class DataProcessingService {
                          Restauración de infraestructura        = Incidencia de Red         ----->  Incidencia de cliente
             */
             String catIncidencia = "";
-            switch (dato.getTipoIncidencia())
-            {
-                case "Restauración de servicio a usuario":
-                case "Restauración de infraestructura":
-                case "Incidente de Red":
-                    catIncidencia = "Incidencia de cliente";
-                    break;
-                case "Petición de serv. por el usuario":
-                case "Evento de infraestructura":
-                case "Requerimiento de Red":
-                    catIncidencia = "Requerimiento de cliente";
-                    break;
-                default:
-                    catIncidencia = dato.getTipoIncidencia();
+
+            if (dato.getTipoIncidencia().equalsIgnoreCase("Restauración de servicio a usuario") ||
+                    dato.getTipoIncidencia().equalsIgnoreCase("Restauración de infraestructura") ||
+                    dato.getTipoIncidencia().equalsIgnoreCase("Incidente de Red") ||
+                    dato.getTipoIncidencia().equalsIgnoreCase("Incidente de Cliente")){
+                catIncidencia = "Incidente de Cliente";
             }
+            else if (dato.getTipoIncidencia().equalsIgnoreCase("Petición de serv. por el usuario") ||
+                    dato.getTipoIncidencia().equalsIgnoreCase("Evento de infraestructura") ||
+                    dato.getTipoIncidencia().equalsIgnoreCase("Requerimiento de Red") ||
+                    dato.getTipoIncidencia().equalsIgnoreCase("Requerimiento de cliente")){
+                catIncidencia = "Requerimiento de Cliente";
+            }else{
+                System.out.println(dato.getTipoIncidencia());
+            }
+
             TipoIncidencias ent7 = tipoIncidenciaRepository.findByTipo(StringUtils.trimToEmpty(catIncidencia).toLowerCase());
 
 
