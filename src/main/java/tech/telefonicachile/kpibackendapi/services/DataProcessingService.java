@@ -1,53 +1,23 @@
 package tech.telefonicachile.kpibackendapi.services;
 
+import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tech.telefonicachile.kpibackendapi.dtos.internals.ObjectValueDto;
 import tech.telefonicachile.kpibackendapi.entities.Incidente;
 import tech.telefonicachile.kpibackendapi.entities.TemporalIncidente;
-import tech.telefonicachile.kpibackendapi.entities.catalogs.*;
 import tech.telefonicachile.kpibackendapi.helper.EnumDatasource;
 import tech.telefonicachile.kpibackendapi.repository.ICatalogosRepository;
 import tech.telefonicachile.kpibackendapi.repository.IncidentesRepository;
-import tech.telefonicachile.kpibackendapi.repository.TmpIncidentesRepository;
-import tech.telefonicachile.kpibackendapi.repository.catalogs.*;
+
 
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class DataProcessingService {
-    @Autowired
-    private TmpIncidentesRepository tmpIncidentesRepository;
-
-    @Autowired
-    private ClasificacionTipoServRepository clasificacionTipoServRepository;
-
-    @Autowired
-    private CodigoServiciosRepository codigoServiciosRepository;
-
-    @Autowired
-    private GrupoPropietarioRepository grupoPropietarioRepository;
-
-    @Autowired
-    private NivelSoporteRepository nivelSoporteRepository;
-
-    @Autowired
-    private SegmentosRepository segmentosRepository;
-
-    @Autowired
-    private SubsegmentosRepository subsegmentosRepository;
-
-    @Autowired
-    private TipoServicioRemedyRepository tipoServicioRemedyRepository;
-    @Autowired
-    private TipoServiciosRepository tipoServiciosRepository;
-    @Autowired
-    private UrgenciaOBRepository urgenciaOBRepository;
-
 
     @Autowired
     private IncidentesRepository incidentesRepository;
@@ -71,18 +41,12 @@ public class DataProcessingService {
 
 
     public void dataProcessIncidentesRequerimientos(int idReporte, EnumDatasource source, ImportServices importServices){
-        //LoadImportServices importServices = new LoadImportServices();
+
         List<TemporalIncidente> dataRaw = importServices.getDataImported();
 
-        List<Incidente> dataToInsert = new ArrayList<>();
-        List<Incidente> dataToUpdate = new ArrayList<>();
         for(TemporalIncidente dato: dataRaw){
 
             boolean ticketExists = incidentesRepository.findByTicket(dato.getTicket()).isPresent();
-
-            if(dato.getTicket().equals("INC000002623543")){
-                System.out.println("test");
-            }
 
             ObjectValueDto ent1 = catalogosRepository.getServicioIso(StringUtils.trimToEmpty(dato.getServicio()));
             ObjectValueDto ent4 = catalogosRepository.getImpacto(StringUtils.trimToEmpty(dato.getImpacto()));
@@ -90,8 +54,15 @@ public class DataProcessingService {
             ObjectValueDto ent6 = catalogosRepository.getPrioridad(StringUtils.trimToEmpty(dato.getPrioridad()));
             ObjectValueDto ent9 = catalogosRepository.getEstadoTicket(StringUtils.trimToEmpty(dato.getEstado()));
             ObjectValueDto ent8 = catalogosRepository.getCliente(StringUtils.trimToEmpty(dato.getCliente()));
-            //Clientes ent8 = clientesRepository.findByCliente(StringUtils.trimToEmpty(dato.getCliente()));
+//            if (ent8 == null){
+//                catalogosRepository.createCliente(StringUtils.trimToEmpty(dato.getCliente()));
+//                ent8 = catalogosRepository.getCliente(StringUtils.trimToEmpty(dato.getCliente()));
+//            }
             ObjectValueDto ent2 = catalogosRepository.getGrupoAsignado(StringUtils.trimToEmpty(dato.getGrupoAsignado()));
+//            if(ent2 == null){
+//                catalogosRepository.createGrupoAsignacion(StringUtils.trimToEmpty(dato.getGrupoAsignado()));
+//                ent2 = catalogosRepository.getGrupoAsignado(StringUtils.trimToEmpty(dato.getGrupoAsignado()));
+//            }
 
             //Clasificación TIpo de Incidencia
             //Agregar regla de negocio:
@@ -167,10 +138,8 @@ public class DataProcessingService {
                 case EnumDatasource.EXTERNO_INC_IYR_INGSYS_SEMANAL:
 
 
-                    GrupoPropietario ent3 = grupoPropietarioRepository.findByGrupo(StringUtils.trimToEmpty(dato.getGrupoPropietario()));
-                    //Catpresol1 ent10 = catpresol1Repository.findByCatpresol1(StringUtils.trimToEmpty(dato.getCatpresol1()));
+                    ObjectValueDto ent3 = catalogosRepository.getGrupoPropietario(StringUtils.trimToEmpty(dato.getGrupoPropietario()));
                     ObjectValueDto ent10 = catalogosRepository.getCatpresol1(StringUtils.trimToEmpty(dato.getCatpresol1()));
-                    //Catpresol2 ent11 = catpresol2Repository.findByCatpresol2(StringUtils.trimToEmpty(dato.getCatpresol2()));
                     ObjectValueDto ent11 = catalogosRepository.getCatpresol2(StringUtils.trimToEmpty(dato.getCatpresol2()));
 
                     String sla = formatearHora(dato.getSla());
@@ -181,7 +150,7 @@ public class DataProcessingService {
                     {
                         incidentesRepository.updateTicketFromExternal(Incidente.builder()
                                 .idGrupoAsignado(ent2 != null ? ent2.getId() : null)
-                                .idGrupoPropietario(ent3 != null ? ent3.getIdGrupo() : null)
+                                .idGrupoPropietario(ent3 != null ? ent3.getId() : null)
                                 .responsable(dato.getResponsable())
                                 .remitente(dato.getRemitente())
                                 .idImpacto(ent4 != null ? ent4.getId() : null)
@@ -233,7 +202,7 @@ public class DataProcessingService {
                                 .ticket(dato.getTicket())
                                 .idServicio(ent1 != null ? ent1.getId() : null)
                                 .idGrupoAsignado(ent2 != null ? ent2.getId() : null)
-                                .idGrupoPropietario(ent3 != null ? ent3.getIdGrupo() : null)
+                                .idGrupoPropietario(ent3 != null ? ent3.getId() : null)
                                 .responsable(dato.getResponsable())
                                 .remitente(dato.getRemitente())
                                 .idImpacto(ent4 != null ? ent4.getId() : null)

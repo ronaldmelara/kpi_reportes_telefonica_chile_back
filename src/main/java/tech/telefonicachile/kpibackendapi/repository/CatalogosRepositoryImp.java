@@ -24,7 +24,9 @@ public class CatalogosRepositoryImp implements ICatalogosRepository{
                     .setResultTransformer(Transformers.aliasToBean(ObjectValueDto.class))
                     .getSingleResult();
         }catch (NoResultException | NonUniqueResultException e){
+            e.printStackTrace();
             return null;
+
         }
     }
     @Override
@@ -44,6 +46,70 @@ public class CatalogosRepositoryImp implements ICatalogosRepository{
     public ObjectValueDto getCliente(String value) {
         String qry = "SELECT id_cliente AS id, cliente AS value FROM kpi_tech.catalogo_clientes WHERE cliente=:value";
         return executeQuery(qry, value);
+    }
+
+    @Override
+    public void createCliente(String value){
+        String qry = "INSERT INTO kpi_tech.catalogo_clientes (cliente) VALUES (:value)";
+        executeInsert(qry,value);
+    }
+
+    @Override
+    public void createGrupoAsignacion(String value){
+        String qry = "INSERT INTO kpi_tech.catalogo_grupo_asignado (grupo_asignacion) VALUES (:value)";
+        executeInsert(qry,value);
+    }
+
+//    private void executeInsert(String qry, String prm1) {
+//        EntityTransaction transaction = entityManager.getTransaction();
+//        try {
+//            // Iniciar la transacción
+//            transaction.begin();
+//
+//            // Crear una instancia de Query y establecer los parámetros
+//            Query query = entityManager.createNativeQuery(qry);
+//            query.setParameter(1, prm1);
+//
+//            // Ejecutar la inserción
+//            query.executeUpdate();
+//
+//            // Confirmar la transacción
+//            transaction.commit();
+//
+//            System.out.println("Inserción exitosa");
+//        } catch (Exception e) {
+//            // Si ocurre algún error, hacer rollback de la transacción
+//            if (transaction != null && transaction.isActive()) {
+//                transaction.rollback();
+//            }
+//            e.printStackTrace();
+//        }
+//    }
+
+    private void executeInsert(String qry, String prm1) {
+        EntityTransaction transaction = entityManager.getTransaction();
+        try {
+            // Iniciar la transacción
+            transaction.begin();
+
+            // Crear una instancia de Query y establecer los parámetros
+            Query query = entityManager.createNativeQuery(qry);
+            query.setParameter(1, prm1);
+
+            // Ejecutar la inserción
+            query.executeUpdate();
+
+            // Confirmar la transacción
+            transaction.commit();
+
+            System.out.println("Inserción exitosa");
+        } catch (Exception e) {
+            // Si ocurre algún error, hacer rollback de la transacción
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        }
     }
     @Override
     public ObjectValueDto getServicioIso(String value) {
@@ -84,6 +150,12 @@ public class CatalogosRepositoryImp implements ICatalogosRepository{
     @Override
     public ObjectValueDto getTipoIncidencia(String value) {
         String qry = "SELECT id_tipo_incidencia AS id, tipo AS value FROM kpi_tech.catalogo_tipo_incidencia WHERE tipo=:value";
+        return executeQuery(qry, value);
+    }
+
+    @Override
+    public ObjectValueDto getGrupoPropietario(String value) {
+        String qry = "SELECT id_grupo_propietario AS id, grupo_propietario AS value FROM kpi_tech.catalogo_grupo_propietario WHERE grupo_propietario=:value";
         return executeQuery(qry, value);
     }
 }

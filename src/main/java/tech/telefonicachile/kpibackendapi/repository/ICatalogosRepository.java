@@ -15,4 +15,7 @@ public interface ICatalogosRepository {
     ObjectValueDto getEstadoTicket(String value);
     ObjectValueDto getGrupoAsignado(String value);
     ObjectValueDto getTipoIncidencia(String value);
+    void createCliente(String value);
+    void createGrupoAsignacion(String value);
+    ObjectValueDto getGrupoPropietario(String value);
 }
