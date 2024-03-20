@@ -5,14 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class AuthResponseDTO {
-    private String accessToken;
-    private String tokenType = "Bearer ";
+@Builder
+public class RptTotalesIncReqResponse {
 
-
-
+    Integer idGrupoAsignacion;
+    String grupoAsignacion;
+    Integer totalIncidentes;
+    Integer totalRequerimientos;
+    Integer totalGeneralPorGrupo;
 }
