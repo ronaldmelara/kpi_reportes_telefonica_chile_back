@@ -18,4 +18,7 @@ public interface ICatalogosRepository {
     void createCliente(String value);
     void createGrupoAsignacion(String value);
     ObjectValueDto getGrupoPropietario(String value);
+    void createCatpresol1(String value);
+    void createCatpresol2(String value);
+    void createGrupoPropietario(String value);
 }

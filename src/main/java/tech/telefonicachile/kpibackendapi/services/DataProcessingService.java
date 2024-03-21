@@ -54,15 +54,15 @@ public class DataProcessingService {
             ObjectValueDto ent6 = catalogosRepository.getPrioridad(StringUtils.trimToEmpty(dato.getPrioridad()));
             ObjectValueDto ent9 = catalogosRepository.getEstadoTicket(StringUtils.trimToEmpty(dato.getEstado()));
             ObjectValueDto ent8 = catalogosRepository.getCliente(StringUtils.trimToEmpty(dato.getCliente()));
-//            if (ent8 == null){
-//                catalogosRepository.createCliente(StringUtils.trimToEmpty(dato.getCliente()));
-//                ent8 = catalogosRepository.getCliente(StringUtils.trimToEmpty(dato.getCliente()));
-//            }
+            if (ent8 == null){
+                catalogosRepository.createCliente(StringUtils.trimToEmpty(dato.getCliente()));
+                ent8 = catalogosRepository.getCliente(StringUtils.trimToEmpty(dato.getCliente()));
+            }
             ObjectValueDto ent2 = catalogosRepository.getGrupoAsignado(StringUtils.trimToEmpty(dato.getGrupoAsignado()));
-//            if(ent2 == null){
-//                catalogosRepository.createGrupoAsignacion(StringUtils.trimToEmpty(dato.getGrupoAsignado()));
-//                ent2 = catalogosRepository.getGrupoAsignado(StringUtils.trimToEmpty(dato.getGrupoAsignado()));
-//            }
+            if(ent2 == null){
+                catalogosRepository.createGrupoAsignacion(StringUtils.trimToEmpty(dato.getGrupoAsignado()));
+                ent2 = catalogosRepository.getGrupoAsignado(StringUtils.trimToEmpty(dato.getGrupoAsignado()));
+            }
 
             //Clasificación TIpo de Incidencia
             //Agregar regla de negocio:
@@ -139,8 +139,20 @@ public class DataProcessingService {
 
 
                     ObjectValueDto ent3 = catalogosRepository.getGrupoPropietario(StringUtils.trimToEmpty(dato.getGrupoPropietario()));
+                    if(ent3 == null){
+                        catalogosRepository.createGrupoPropietario(StringUtils.trimToEmpty(dato.getGrupoPropietario()));
+                        ent3 = catalogosRepository.getGrupoPropietario(StringUtils.trimToEmpty(dato.getGrupoPropietario()));
+                    }
                     ObjectValueDto ent10 = catalogosRepository.getCatpresol1(StringUtils.trimToEmpty(dato.getCatpresol1()));
+                    if(ent10 == null){
+                        catalogosRepository.createCatpresol1(StringUtils.trimToEmpty(dato.getCatpresol1()));
+                        ent10 = catalogosRepository.getCatpresol1(StringUtils.trimToEmpty(dato.getCatpresol1()));
+                    }
                     ObjectValueDto ent11 = catalogosRepository.getCatpresol2(StringUtils.trimToEmpty(dato.getCatpresol2()));
+                    if(ent11 == null){
+                        catalogosRepository.createCatpresol2(StringUtils.trimToEmpty(dato.getCatpresol2()));
+                        ent11 = catalogosRepository.getCatpresol2(StringUtils.trimToEmpty(dato.getCatpresol2()));
+                    }
 
                     String sla = formatearHora(dato.getSla());
                     String e2e = formatearHora(dato.getE2e());

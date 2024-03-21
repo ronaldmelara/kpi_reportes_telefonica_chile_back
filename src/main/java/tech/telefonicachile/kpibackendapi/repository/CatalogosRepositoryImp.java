@@ -2,6 +2,7 @@ package tech.telefonicachile.kpibackendapi.repository;
 
 
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
@@ -60,6 +61,24 @@ public class CatalogosRepositoryImp implements ICatalogosRepository{
         executeInsert(qry,value);
     }
 
+    @Override
+    public void createCatpresol1(String value){
+        String qry = "INSERT INTO kpi_tech.catalogo_catpresol1 (catpresol1) VALUES (:value)";
+        executeInsert(qry,value);
+    }
+
+    @Override
+    public void createCatpresol2(String value){
+        String qry = "INSERT INTO kpi_tech.catalogo_catpresol1 (catpresol1) VALUES (:value)";
+        executeInsert(qry,value);
+    }
+
+    @Override
+    public void createGrupoPropietario(String value){
+        String qry = "INSERT INTO kpi_tech.catalogo_grupo_propietario (grupo_propietario) VALUES (:value)";
+        executeInsert(qry,value);
+    }
+
 //    private void executeInsert(String qry, String prm1) {
 //        EntityTransaction transaction = entityManager.getTransaction();
 //        try {
@@ -86,28 +105,16 @@ public class CatalogosRepositoryImp implements ICatalogosRepository{
 //        }
 //    }
 
+    @Transactional
     private void executeInsert(String qry, String prm1) {
-        EntityTransaction transaction = entityManager.getTransaction();
         try {
-            // Iniciar la transacción
-            transaction.begin();
 
-            // Crear una instancia de Query y establecer los parámetros
-            Query query = entityManager.createNativeQuery(qry);
-            query.setParameter(1, prm1);
-
-            // Ejecutar la inserción
-            query.executeUpdate();
-
-            // Confirmar la transacción
-            transaction.commit();
+            entityManager.createNativeQuery(qry)
+                            .setParameter("value", prm1)
+                                    .executeUpdate();
 
             System.out.println("Inserción exitosa");
         } catch (Exception e) {
-            // Si ocurre algún error, hacer rollback de la transacción
-            if (transaction != null && transaction.isActive()) {
-                transaction.rollback();
-            }
             e.printStackTrace();
         }
     }
