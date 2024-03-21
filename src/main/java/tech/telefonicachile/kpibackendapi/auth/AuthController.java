@@ -1,5 +1,6 @@
 package tech.telefonicachile.kpibackendapi.auth;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth/")
 @RequiredArgsConstructor
+@Tag(name = "Autenticación de Usuario", description = "Autenticación de Usuario y Generación de Token Bearer")
 public class AuthController {
 
     private final AuthService authService;
