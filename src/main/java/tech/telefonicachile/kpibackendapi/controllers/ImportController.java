@@ -1,5 +1,8 @@
 package tech.telefonicachile.kpibackendapi.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,11 +20,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/import")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication")
+@Tag(name = "Importación de Archivos", description = "Importación de Archivos")
 public class ImportController {
 
     @Autowired
     private ImportServices importServices;
 
+    @Operation(summary = "Importar un archivo como insumo para reportes", description = "Importar un archivo como insumo para reportes")
     @PostMapping("")
     public ResponseEntity<ImportLog> register(@RequestParam(value = "file") MultipartFile file,
                                                      @RequestParam("idDatasource") int idDatasoruce,
@@ -49,6 +55,7 @@ public class ImportController {
 
     }
 
+    @Operation(summary = "Obtener lista de archivos importados", description = "Obtener lista de archivos importados")
     @GetMapping("")
     @ResponseBody
     public ResponseEntity<List<ImportResponse>> get(){

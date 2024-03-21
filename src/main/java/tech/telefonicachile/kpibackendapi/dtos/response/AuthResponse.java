@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class AuthResponseDTO {
+public class AuthResponse {
     private String accessToken;
     private String tokenType = "Bearer ";
 

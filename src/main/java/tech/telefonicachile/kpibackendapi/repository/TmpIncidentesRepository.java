@@ -9,5 +9,4 @@ import java.util.Optional;
 @Repository
 public interface TmpIncidentesRepository extends JpaRepository<TemporalIncidente, Long> {
 
-    Optional<TemporalIncidente> findByTicket(String ticket);
 }
