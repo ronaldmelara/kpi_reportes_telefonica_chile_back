@@ -77,7 +77,7 @@ public class ReportsIncReqController {
     }
 
     @Operation(summary = "Reporte Tiempo de Restauracion de Incidentes y Requerimientos Managed por Grupo Asignado", description = "Reporte Tiempo de Restauracion de Incidentes y Requerimientos Managed por Grupo Asignado")
-    @GetMapping("/rpt04/{anio}/{mes}")
+    @GetMapping("/rpt05/{anio}/{mes}")
     @ResponseBody
     public ResponseEntity<List<RptTiemposIncReqResponse>> getTiempoRestauracionIncReqManaged(@PathVariable int anio, @PathVariable int mes){
         List<RptTiemposIncReqResponse> result = reportsIncReqServices.getTiempoRestauracionIncReqManaged(mes, anio);
