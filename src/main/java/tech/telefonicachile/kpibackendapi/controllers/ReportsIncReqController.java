@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tech.telefonicachile.kpibackendapi.dtos.response.PrtTotalIncReqCumplidosResponse;
 import tech.telefonicachile.kpibackendapi.dtos.response.RptTiemposIncReqResponse;
+import tech.telefonicachile.kpibackendapi.dtos.response.RptTotalesIncPrioridadResponse;
 import tech.telefonicachile.kpibackendapi.dtos.response.RptTotalesIncReqResponse;
 import tech.telefonicachile.kpibackendapi.services.ReportsIncReqServices;
 
@@ -81,6 +82,32 @@ public class ReportsIncReqController {
     @ResponseBody
     public ResponseEntity<List<RptTiemposIncReqResponse>> getTiempoRestauracionIncReqManaged(@PathVariable int anio, @PathVariable int mes){
         List<RptTiemposIncReqResponse> result = reportsIncReqServices.getTiempoRestauracionIncReqManaged(mes, anio);
+
+        if(result.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }else{
+            return ResponseEntity.ok(result);
+        }
+    }
+
+    @Operation(summary = "Reporte Tiempo de Restauracion de Incidentes y Requerimientos Service Delivery", description = "Reporte Tiempo de Restauracion de Incidentes y Requerimientos Service Delivery")
+    @GetMapping("/rpt06/{anio}/{mes}")
+    @ResponseBody
+    public ResponseEntity<List<RptTiemposIncReqResponse>> getTiempoRestauracionIncReqServiceDelivery(@PathVariable int anio, @PathVariable int mes){
+        List<RptTiemposIncReqResponse> result = reportsIncReqServices.getTiempoRestauracionIncReqServiceDelivery(mes, anio);
+
+        if(result.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }else{
+            return ResponseEntity.ok(result);
+        }
+    }
+
+    @Operation(summary = "Reporte Total de Incidentes por Prioridad", description = "Reporte Total de Incidentes por Prioridad")
+    @GetMapping("/rpt07/{anio}/{mes}")
+    @ResponseBody
+    public ResponseEntity<List<RptTotalesIncPrioridadResponse>> getTotalIncidentesPorPrioridad(@PathVariable int anio, @PathVariable int mes){
+        List<RptTotalesIncPrioridadResponse> result = reportsIncReqServices.getTotalIncidentesPorPrioridad(mes, anio);
 
         if(result.isEmpty()){
             return ResponseEntity.noContent().build();

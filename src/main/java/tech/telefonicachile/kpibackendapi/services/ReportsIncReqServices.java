@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tech.telefonicachile.kpibackendapi.dtos.response.PrtTotalIncReqCumplidosResponse;
 import tech.telefonicachile.kpibackendapi.dtos.response.RptTiemposIncReqResponse;
+import tech.telefonicachile.kpibackendapi.dtos.response.RptTotalesIncPrioridadResponse;
 import tech.telefonicachile.kpibackendapi.dtos.response.RptTotalesIncReqResponse;
 import tech.telefonicachile.kpibackendapi.repository.IReportsRepository;
 
@@ -33,5 +34,13 @@ public class ReportsIncReqServices {
 
     public List<RptTiemposIncReqResponse> getTiempoRestauracionIncReqManaged(int mes, int anio){
         return reportsRepository.getTiempoRestauracionIncReqManaged(mes, anio);
+    }
+
+    public List<RptTiemposIncReqResponse> getTiempoRestauracionIncReqServiceDelivery(int mes, int anio){
+        return reportsRepository.getTiempoRestauracionIncReqServiceDelivery(mes, anio);
+    }
+
+    public List<RptTotalesIncPrioridadResponse> getTotalIncidentesPorPrioridad(int mes, int anio){
+        return reportsRepository.getTotalIncidentesPorPrioridad(mes, anio);
     }
 }
