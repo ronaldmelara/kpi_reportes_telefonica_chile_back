@@ -1,42 +1,47 @@
 /*INCIDENTES Y REQUERIMIENTOS*/
 SELECT 
 DISTINCT B.id_grupo_asignacion, B.grupo_asignacion, 
-(SELECT COUNT(1) FROM kpi_tech.incidencias_requerimientos A1 INNER JOIN kpi_tech.catalogo_grupo_asignado B1 ON A1.id_grupo_asignacion = B1.id_grupo_asignacion 
-INNER JOIN kpi_tech.catalogo_tipo_incidencia C1 ON A1.id_tipo_incidencia = C1.id_tipo_incidencia WHERE C1.id_tipo_incidencia = 2 and A1.id_grupo_asignacion  = B.id_grupo_asignacion) TotalIncidentes,
-(SELECT COUNT(1) FROM kpi_tech.incidencias_requerimientos A1 INNER JOIN kpi_tech.catalogo_grupo_asignado B1 ON A1.id_grupo_asignacion = B1.id_grupo_asignacion 
-INNER JOIN kpi_tech.catalogo_tipo_incidencia C1 ON A1.id_tipo_incidencia = C1.id_tipo_incidencia WHERE C1.id_tipo_incidencia = 1 and A1.id_grupo_asignacion  = B.id_grupo_asignacion) TotalRequerimientos,
-(SELECT COUNT(1) FROM kpi_tech.incidencias_requerimientos A1 INNER JOIN kpi_tech.catalogo_grupo_asignado B1 ON A1.id_grupo_asignacion = B1.id_grupo_asignacion 
-WHERE A1.id_grupo_asignacion  = B.id_grupo_asignacion AND A1.id_tipo_incidencia IN (1,2)) TotalGeneral
+(SELECT COUNT(1) FROM kpi_tech.incidencias_requerimientos A1 
+WHERE A1.id_tipo_incidencia = 2 and A1.id_grupo_asignacion  = B.id_grupo_asignacion AND
+A1.id_reporte = A.id_reporte) TotalIncidentes,
+(SELECT COUNT(1) FROM kpi_tech.incidencias_requerimientos A1 
+WHERE A1.id_tipo_incidencia = 1 and A1.id_grupo_asignacion  = B.id_grupo_asignacion AND
+A1.id_reporte = A.id_reporte) TotalRequerimientos,
+(SELECT COUNT(1) FROM kpi_tech.incidencias_requerimientos A1
+WHERE A1.id_grupo_asignacion  = B.id_grupo_asignacion AND A1.id_tipo_incidencia IN (1,2) AND
+A1.id_reporte = A.id_reporte) TotalGeneral
 FROM kpi_tech.incidencias_requerimientos A
 INNER JOIN kpi_tech.catalogo_grupo_asignado B ON A.id_grupo_asignacion = B.id_grupo_asignacion
 INNER JOIN kpi_tech.catalogo_tipo_incidencia C ON A.id_tipo_incidencia = C.id_tipo_incidencia
 INNER JOIN kpi_tech.reportes D ON A.id_reporte = D.id_reporte
 WHERE C.id_tipo_incidencia IN (1,2) AND D.id_tipo_reporte = 1 AND D.Mes = 2 AND D.anio = 2024
-group by B.id_grupo_asignacion, B.grupo_asignacion
+AND B.id_grupo_asignacion NOT IN(15,2,1,17,21,16,20,9,7)
+group by B.id_grupo_asignacion, B.grupo_asignacion, A.id_reporte
 ORDER BY B.grupo_asignacion ASC;
 
 /*TD REQUERIMIENTOS POR GRUPO*/
 SELECT 
 DISTINCT B.id_grupo_asignacion, B.grupo_asignacion, 
-(SELECT COUNT(1) FROM kpi_tech.incidencias_requerimientos A1 INNER JOIN kpi_tech.catalogo_grupo_asignado B1 ON A1.id_grupo_asignacion = B1.id_grupo_asignacion 
-INNER JOIN kpi_tech.catalogo_estado_ticket C1 ON A1.id_estado_ticket = C1.id_estado_ticket 
-INNER JOIN kpi_tech.catalogo_tipo_incidencia D ON A1.id_tipo_incidencia = D.id_tipo_incidencia WHERE C1.id_estado_ticket = 1 and A1.id_grupo_asignacion  = B.id_grupo_asignacion AND D.id_tipo_incidencia IN (1,2) AND A1.req_cumple_kpi = 1) TotalCumplidos
+SUM(1) AS totalCumplidos 
 FROM kpi_tech.incidencias_requerimientos A
 INNER JOIN kpi_tech.catalogo_grupo_asignado B ON A.id_grupo_asignacion = B.id_grupo_asignacion
 INNER JOIN kpi_tech.catalogo_tipo_incidencia C ON A.id_tipo_incidencia = C.id_tipo_incidencia
 INNER JOIN kpi_tech.reportes D ON A.id_reporte = D.id_reporte
-WHERE C.id_tipo_incidencia IN (1,2) AND A.req_cumple_kpi = 1  AND D.id_tipo_reporte = 1 AND D.Mes = 2 AND D.anio = 2024
+WHERE A.id_estado_ticket = 1 AND A.req_cumple_kpi = 1  AND D.id_tipo_reporte = 1 AND D.Mes = 2 AND D.anio = 2024
+AND B.id_grupo_asignacion NOT IN(15,2,1,17,21,16,20,9,7)
 group by B.id_grupo_asignacion, B.grupo_asignacion
 ORDER BY B.grupo_asignacion ASC;
 
 /*TD INCIDENCIAS POR GRUPO*/
 SELECT 
 DISTINCT B.id_grupo_asignacion, B.grupo_asignacion, 
-(SELECT COUNT(1) FROM smart10.carga_servicios_cloud A1 INNER JOIN smart10.catalogo_grupo_asignado B1 ON A1.id_grupo_asignacion = B1.id_grupo_asignacion INNER JOIN smart10.catalogo_estado_ticket C1 ON A1.id_estado_ticket = C1.id_estado_ticket INNER JOIN smart10.catalogo_tipo_incidencia D ON A1.id_tipo_incidencia = D.id_tipo_incidencia WHERE C1.id_estado_ticket = 1 and A1.id_grupo_asignacion  = B.id_grupo_asignacion AND D.id_tipo_incidencia IN (1,2) AND A1.inc_cumple_kpi = 1) TotalCumplidos
-FROM smart10.carga_servicios_cloud A
-INNER JOIN smart10.catalogo_grupo_asignado B ON A.id_grupo_asignacion = B.id_grupo_asignacion
-INNER JOIN smart10.catalogo_tipo_incidencia C ON A.id_tipo_incidencia = C.id_tipo_incidencia
-WHERE C.id_tipo_incidencia IN (1,2) AND A.inc_cumple_kpi = 1
+SUM(1) AS totalCumplidos 
+FROM kpi_tech.incidencias_requerimientos A
+INNER JOIN kpi_tech.catalogo_grupo_asignado B ON A.id_grupo_asignacion = B.id_grupo_asignacion
+INNER JOIN kpi_tech.catalogo_tipo_incidencia C ON A.id_tipo_incidencia = C.id_tipo_incidencia
+INNER JOIN kpi_tech.reportes D ON A.id_reporte = D.id_reporte
+WHERE A.id_estado_ticket = 1 AND C.id_tipo_incidencia = 2 AND A.inc_cumple_kpi = 1  AND D.id_tipo_reporte = 1 AND D.Mes = 2 AND D.anio = 2024
+AND B.id_grupo_asignacion NOT IN(15,2,1,17,21,16,20,9,7)
 group by B.id_grupo_asignacion, B.grupo_asignacion
 ORDER BY B.grupo_asignacion ASC;
 
@@ -44,37 +49,75 @@ ORDER BY B.grupo_asignacion ASC;
 SELECT 
 DISTINCT B.id_grupo_asignacion, B.grupo_asignacion,
 (SELECT 
-sec_to_time(AVG(TIME_TO_SEC(A1.sla))) 
-FROM smart10.carga_servicios_cloud A1  
-WHERE A1.id_grupo_asignacion  = B.id_grupo_asignacion AND A1.id_tipo_incidencia = 2
+CAST(sec_to_time(AVG(TIME_TO_SEC(A1.sla))) AS char)
+FROM kpi_tech.incidencias_requerimientos A1  
+WHERE A1.id_grupo_asignacion  = B.id_grupo_asignacion AND A1.id_tipo_incidencia = 2 AND A1.id_reporte = A.id_reporte
 group by A1.id_grupo_asignacion) PromedioIncidente,
 (SELECT 
-sec_to_time(AVG(TIME_TO_SEC(A1.sla))) 
-FROM smart10.carga_servicios_cloud A1  
-WHERE A1.id_grupo_asignacion  = B.id_grupo_asignacion AND A1.id_tipo_incidencia = 1
+CAST(sec_to_time(AVG(TIME_TO_SEC(A1.sla))) AS char)
+FROM kpi_tech.incidencias_requerimientos A1  
+WHERE A1.id_grupo_asignacion  = B.id_grupo_asignacion AND A1.id_tipo_incidencia = 1 AND A1.id_reporte = A.id_reporte
 group by A1.id_grupo_asignacion) PromedioRequerimiento,
 (SELECT 
-sec_to_time(AVG(TIME_TO_SEC(A1.sla))) 
-FROM smart10.carga_servicios_cloud A1  
-WHERE A1.id_grupo_asignacion  = B.id_grupo_asignacion AND A1.id_tipo_incidencia IN (1,2)
+CAST(sec_to_time(AVG(TIME_TO_SEC(A1.sla))) as char)
+FROM kpi_tech.incidencias_requerimientos A1  
+WHERE A1.id_grupo_asignacion  = B.id_grupo_asignacion AND A1.id_tipo_incidencia IN (1,2) AND A1.id_reporte = A.id_reporte
 group by A1.id_grupo_asignacion) PromedioTotal,
 (SELECT 
- (AVG(TIME_TO_SEC(A1.sla)) / 86400) * 1440
-FROM smart10.carga_servicios_cloud A1  
-WHERE A1.id_grupo_asignacion  = B.id_grupo_asignacion AND A1.id_tipo_incidencia = 2
+ CAST((AVG(TIME_TO_SEC(A1.sla)) / 86400) * 1440 as float)
+FROM kpi_tech.incidencias_requerimientos A1  
+WHERE A1.id_grupo_asignacion  = B.id_grupo_asignacion AND A1.id_tipo_incidencia = 2 AND A1.id_reporte = A.id_reporte
 group by A1.id_grupo_asignacion) MinInc,
 (SELECT 
- (AVG(TIME_TO_SEC(A1.sla)) / 86400) * 1440
-FROM smart10.carga_servicios_cloud A1  
-WHERE A1.id_grupo_asignacion  = B.id_grupo_asignacion AND A1.id_tipo_incidencia = 1
+ cast((AVG(TIME_TO_SEC(A1.sla)) / 86400) * 1440 as float)
+FROM kpi_tech.incidencias_requerimientos A1  
+WHERE A1.id_grupo_asignacion  = B.id_grupo_asignacion AND A1.id_tipo_incidencia = 1 AND A1.id_reporte = A.id_reporte
 group by A1.id_grupo_asignacion) MinReq
-FROM smart10.carga_servicios_cloud A
-INNER JOIN smart10.catalogo_grupo_asignado B ON A.id_grupo_asignacion = B.id_grupo_asignacion
-INNER JOIN smart10.catalogo_tipo_incidencia C ON A.id_tipo_incidencia = C.id_tipo_incidencia
+FROM kpi_tech.incidencias_requerimientos A
+INNER JOIN kpi_tech.catalogo_grupo_asignado B ON A.id_grupo_asignacion = B.id_grupo_asignacion
+INNER JOIN kpi_tech.catalogo_tipo_incidencia C ON A.id_tipo_incidencia = C.id_tipo_incidencia
+INNER JOIN kpi_tech.reportes D ON A.id_reporte = D.id_reporte
 WHERE C.id_tipo_incidencia IN (1,2)
-group by B.id_grupo_asignacion, B.grupo_asignacion,C.id_tipo_incidencia
+AND B.id_grupo_asignacion NOT IN(8,15,2,1,17,21,16,20,9,7, 12, 24, 4,5, 25) AND D.id_tipo_reporte = 1 AND D.Mes = 2 AND D.anio = 2024
+group by B.id_grupo_asignacion, B.grupo_asignacion,C.id_tipo_incidencia, A.id_reporte
 ORDER BY B.id_grupo_asignacion ASC;
 
+/*IEMPO DE RESTAURACIÓN DE INCIDENTES Y REQUERIMIENTOS  MANAGED*/
+SELECT 
+DISTINCT B.id_grupo_asignacion AS idGrupoAsignacion, B.grupo_asignacion AS grupoAsignacion,
+(SELECT 
+CAST(sec_to_time(AVG(TIME_TO_SEC(A1.sla))) AS char)
+FROM kpi_tech.incidencias_requerimientos A1  
+WHERE A1.id_grupo_asignacion  = B.id_grupo_asignacion AND A1.id_tipo_incidencia = 2 AND A1.id_reporte = A.id_reporte
+group by A1.id_grupo_asignacion) AS promedioIncidentes,
+(SELECT 
+CAST(sec_to_time(AVG(TIME_TO_SEC(A1.sla))) AS char)
+FROM kpi_tech.incidencias_requerimientos A1  
+WHERE A1.id_grupo_asignacion  = B.id_grupo_asignacion AND A1.id_tipo_incidencia = 1 AND A1.id_reporte = A.id_reporte
+group by A1.id_grupo_asignacion) AS promedioRequerimientos,
+(SELECT 
+CAST(sec_to_time(AVG(TIME_TO_SEC(A1.sla))) as char)
+FROM kpi_tech.incidencias_requerimientos A1  
+WHERE A1.id_grupo_asignacion  = B.id_grupo_asignacion AND A1.id_tipo_incidencia IN (1,2) AND A1.id_reporte = A.id_reporte
+group by A1.id_grupo_asignacion) AS promedioTotal,
+(SELECT 
+ CAST((AVG(TIME_TO_SEC(A1.sla)) / 86400) * 1440 as float)
+FROM kpi_tech.incidencias_requerimientos A1  
+WHERE A1.id_grupo_asignacion  = B.id_grupo_asignacion AND A1.id_tipo_incidencia = 2 AND A1.id_reporte = A.id_reporte
+group by A1.id_grupo_asignacion) AS minInc,
+(SELECT 
+ cast((AVG(TIME_TO_SEC(A1.sla)) / 86400) * 1440 as float)
+FROM kpi_tech.incidencias_requerimientos A1  
+WHERE A1.id_grupo_asignacion  = B.id_grupo_asignacion AND A1.id_tipo_incidencia = 1 AND A1.id_reporte = A.id_reporte
+group by A1.id_grupo_asignacion) as minReq
+FROM kpi_tech.incidencias_requerimientos A
+INNER JOIN kpi_tech.catalogo_grupo_asignado B ON A.id_grupo_asignacion = B.id_grupo_asignacion
+INNER JOIN kpi_tech.catalogo_tipo_incidencia C ON A.id_tipo_incidencia = C.id_tipo_incidencia
+INNER JOIN kpi_tech.reportes D ON A.id_reporte = D.id_reporte
+WHERE C.id_tipo_incidencia IN (1,2)
+AND B.id_grupo_asignacion IN(1,2, 15,16,17,21,7,9,20) AND D.id_tipo_reporte = 1 AND D.Mes = 2 AND D.anio = 2024
+group by B.id_grupo_asignacion, B.grupo_asignacion,C.id_tipo_incidencia, A.id_reporte
+ORDER BY B.id_grupo_asignacion ASC;
 
 /*TD TOTAL POR PRIORIDAD*/
 SELECT 

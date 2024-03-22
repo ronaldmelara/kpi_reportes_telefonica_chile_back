@@ -7,12 +7,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Builder
-public class PrtTotalReqCumplidosResponse {
+public class PrtTotalIncReqCumplidosResponse {
     Integer idGrupoAsignacion;
     String grupoAsignacion;
     Long totalCumplidos;
 
-    public PrtTotalReqCumplidosResponse(Integer idGrupoAsignacion, String grupoAsignacion, Long totalCumplidos) {
+    public PrtTotalIncReqCumplidosResponse(Integer idGrupoAsignacion, String grupoAsignacion, Long totalCumplidos) {
         this.idGrupoAsignacion = idGrupoAsignacion;
         this.grupoAsignacion = grupoAsignacion;
         this.totalCumplidos = totalCumplidos;
