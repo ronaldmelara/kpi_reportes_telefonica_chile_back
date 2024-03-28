@@ -1,9 +1,6 @@
 package tech.telefonicachile.kpibackendapi.repository;
 
-import tech.telefonicachile.kpibackendapi.dtos.response.PrtTotalIncReqCumplidosResponse;
-import tech.telefonicachile.kpibackendapi.dtos.response.RptTiemposIncReqResponse;
-import tech.telefonicachile.kpibackendapi.dtos.response.RptTotalesIncPrioridadResponse;
-import tech.telefonicachile.kpibackendapi.dtos.response.RptTotalesIncReqResponse;
+import tech.telefonicachile.kpibackendapi.dtos.response.*;
 
 import java.util.List;
 
@@ -16,4 +13,5 @@ public interface IReportsRepository {
     List<RptTiemposIncReqResponse> getTiempoRestauracionIncReqManaged(int mes, int anio);
     List<RptTiemposIncReqResponse> getTiempoRestauracionIncReqServiceDelivery(int mes, int anio);
     List<RptTotalesIncPrioridadResponse> getTotalIncidentesPorPrioridad(int mes, int anio);
+    List<RptTiemposUrgenciaIncReqResponse> getUrgenciaIncReq(int mes, int anio);
 }

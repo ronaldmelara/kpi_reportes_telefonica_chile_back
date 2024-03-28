@@ -4,10 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
-import tech.telefonicachile.kpibackendapi.dtos.response.PrtTotalIncReqCumplidosResponse;
-import tech.telefonicachile.kpibackendapi.dtos.response.RptTiemposIncReqResponse;
-import tech.telefonicachile.kpibackendapi.dtos.response.RptTotalesIncPrioridadResponse;
-import tech.telefonicachile.kpibackendapi.dtos.response.RptTotalesIncReqResponse;
+import tech.telefonicachile.kpibackendapi.dtos.response.*;
 
 import java.util.List;
 
@@ -267,6 +264,47 @@ public class ReportsRepositoryImp implements IReportsRepository {
                 .setParameter("mes", mes)
                 .unwrap(org.hibernate.query.Query.class)
                 .setResultTransformer(Transformers.aliasToBean(RptTotalesIncPrioridadResponse.class))
+                .getResultList();
+    }
+
+    @Override
+    public List<RptTiemposUrgenciaIncReqResponse> getUrgenciaIncReq(int mes, int anio){
+
+
+        String qry = "SELECT \n" +
+                "DISTINCT D.id_urgencia AS idUrgencia, D.urgencia, \n" +
+                "(SELECT \n" +
+                "CAST(sec_to_time(AVG(TIME_TO_SEC(A1.sla))) as char) \n" +
+                "FROM kpi_tech.incidencias_requerimientos A1  \n" +
+                "WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia = 2 AND A1.id_reporte = E.id_reporte) AS promedioIncidentes, \n" +
+                "(SELECT \n" +
+                "CAST(sec_to_time(AVG(TIME_TO_SEC(A1.sla))) AS CHAR) \n" +
+                "FROM kpi_tech.incidencias_requerimientos A1  \n" +
+                "WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia = 1 AND A1.id_reporte = E.id_reporte) AS promedioRequerimientos, \n" +
+                "(SELECT \n" +
+                "CAST(sec_to_time(AVG(TIME_TO_SEC(A1.sla))) AS CHAR) \n" +
+                "FROM kpi_tech.incidencias_requerimientos A1   \n" +
+                "WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia IN (1,2)  AND A1.id_reporte = E.id_reporte) AS promedioTotal, \n" +
+                "(SELECT \n" +
+                " (AVG(TIME_TO_SEC(A1.sla)) / 86400) * 1440 \n" +
+                "FROM kpi_tech.incidencias_requerimientos A1  \n" +
+                "WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia = 2  AND A1.id_reporte = E.id_reporte) AS minInc, \n" +
+                "(SELECT \n" +
+                " (AVG(TIME_TO_SEC(A1.sla)) / 86400) * 1440 \n" +
+                "FROM kpi_tech.incidencias_requerimientos A1  \n" +
+                "WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia = 1  AND A1.id_reporte = E.id_reporte) AS minReq \n" +
+                "FROM kpi_tech.incidencias_requerimientos A\n" +
+                "INNER JOIN kpi_tech.catalogo_urgencias_tech D ON A.id_urgencia = D.id_urgencia \n" +
+                "INNER JOIN kpi_tech.reportes E ON A.id_reporte = E.id_reporte \n" +
+                "WHERE E.id_tipo_reporte = 1 AND E.Mes = :mes AND E.anio = :anio \n " +
+                "group by D.id_urgencia, e.id_reporte \n " +
+                "ORDER BY D.id_urgencia ASC;";
+
+        return (List<RptTiemposUrgenciaIncReqResponse>) entityManager.createNativeQuery(qry)
+                .setParameter("anio", anio)
+                .setParameter("mes", mes)
+                .unwrap(org.hibernate.query.Query.class)
+                .setResultTransformer(Transformers.aliasToBean(RptTiemposUrgenciaIncReqResponse.class))
                 .getResultList();
     }
 

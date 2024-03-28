@@ -182,28 +182,29 @@ SELECT
 DISTINCT D.id_urgencia, D.urgencia,
 (SELECT 
 sec_to_time(AVG(TIME_TO_SEC(A1.sla))) 
-FROM smart10.carga_servicios_cloud A1  
-WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia = 2) PromedioIncidente,
+FROM kpi_tech.incidencias_requerimientos A1  
+WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia = 2 AND A1.id_reporte = E.id_reporte) PromedioIncidente,
 (SELECT 
 sec_to_time(AVG(TIME_TO_SEC(A1.sla))) 
-FROM smart10.carga_servicios_cloud A1  
-WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia = 1) PromedioRequerimiento,
+FROM kpi_tech.incidencias_requerimientos A1  
+WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia = 1 AND A1.id_reporte = E.id_reporte) PromedioRequerimiento,
 (SELECT 
 sec_to_time(AVG(TIME_TO_SEC(A1.sla))) 
-FROM smart10.carga_servicios_cloud A1  
-WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia IN (1,2)) Total,
+FROM kpi_tech.incidencias_requerimientos A1   
+WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia IN (1,2)  AND A1.id_reporte = E.id_reporte) Total,
 (SELECT 
  (AVG(TIME_TO_SEC(A1.sla)) / 86400) * 1440
-FROM smart10.carga_servicios_cloud A1  
-WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia = 2) MinInc,
+FROM kpi_tech.incidencias_requerimientos A1  
+WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia = 2  AND A1.id_reporte = E.id_reporte) MinInc,
 (SELECT 
  (AVG(TIME_TO_SEC(A1.sla)) / 86400) * 1440
-FROM smart10.carga_servicios_cloud A1  
-WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia = 1) MinReq
-FROM smart10.carga_servicios_cloud A
-INNER JOIN smart10.catalogo_grupo_asignado B ON A.id_grupo_asignacion = B.id_grupo_asignacion
-INNER JOIN smart10.catalogo_urgencias_tech D ON A.id_urgencia = D.id_urgencia
-group by D.id_urgencia
+FROM kpi_tech.incidencias_requerimientos A1  
+WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia = 1  AND A1.id_reporte = E.id_reporte) MinReq
+FROM kpi_tech.incidencias_requerimientos A
+INNER JOIN kpi_tech.catalogo_urgencias_tech D ON A.id_urgencia = D.id_urgencia
+INNER JOIN kpi_tech.reportes E ON A.id_reporte = E.id_reporte
+WHERE E.id_tipo_reporte = 1 AND E.Mes = 2 AND E.anio = 2024
+group by D.id_urgencia, e.id_reporte
 ORDER BY D.id_urgencia ASC;
 
 /*URGENCIA INCIDENTES Y REQUERIMIENTOS SERVICE DELIVERY*/

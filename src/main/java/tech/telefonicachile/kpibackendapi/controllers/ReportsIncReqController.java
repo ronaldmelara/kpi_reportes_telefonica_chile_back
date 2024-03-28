@@ -7,10 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tech.telefonicachile.kpibackendapi.dtos.response.PrtTotalIncReqCumplidosResponse;
-import tech.telefonicachile.kpibackendapi.dtos.response.RptTiemposIncReqResponse;
-import tech.telefonicachile.kpibackendapi.dtos.response.RptTotalesIncPrioridadResponse;
-import tech.telefonicachile.kpibackendapi.dtos.response.RptTotalesIncReqResponse;
+import tech.telefonicachile.kpibackendapi.dtos.response.*;
 import tech.telefonicachile.kpibackendapi.services.ReportsIncReqServices;
 
 import java.util.List;
@@ -108,6 +105,19 @@ public class ReportsIncReqController {
     @ResponseBody
     public ResponseEntity<List<RptTotalesIncPrioridadResponse>> getTotalIncidentesPorPrioridad(@PathVariable int anio, @PathVariable int mes){
         List<RptTotalesIncPrioridadResponse> result = reportsIncReqServices.getTotalIncidentesPorPrioridad(mes, anio);
+
+        if(result.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }else{
+            return ResponseEntity.ok(result);
+        }
+    }
+
+    @Operation(summary = "Reporte Tiempo de Incidentes/Requerimientos por Urgencia", description = "Reporte Tiempo de Incidentes/Requerimientos por Urgencia")
+    @GetMapping("/rpt08/{anio}/{mes}")
+    @ResponseBody
+    public ResponseEntity<List<RptTiemposUrgenciaIncReqResponse>> getUrgenciaIncReq(@PathVariable int anio, @PathVariable int mes){
+        List<RptTiemposUrgenciaIncReqResponse> result = reportsIncReqServices.getUrgenciaIncReq(mes, anio);
 
         if(result.isEmpty()){
             return ResponseEntity.noContent().build();
