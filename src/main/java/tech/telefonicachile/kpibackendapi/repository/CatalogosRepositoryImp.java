@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import tech.telefonicachile.kpibackendapi.dtos.internals.ObjectValueDto;
 import tech.telefonicachile.kpibackendapi.dtos.response.DatasourcesResponse;
+import tech.telefonicachile.kpibackendapi.dtos.response.PeriodosReporteResponse;
 import tech.telefonicachile.kpibackendapi.dtos.response.RptTotalesIncPrioridadResponse;
 
 
@@ -52,6 +53,22 @@ public class CatalogosRepositoryImp implements ICatalogosRepository{
 
         try{
             return entityManager.createNativeQuery(qry)
+                    .unwrap(org.hibernate.query.Query.class)
+                    .setResultTransformer(Transformers.aliasToBean(tClass))
+                    .getResultList();
+        }catch (NoResultException | NonUniqueResultException e){
+            e.printStackTrace();
+            return Collections.emptyList();
+
+        }
+    }
+
+    private <T> List<T> executeListQuery(String qry, String prm, Class<T> tClass){
+
+
+        try{
+            return entityManager.createNativeQuery(qry)
+                    .setParameter("value", prm)
                     .unwrap(org.hibernate.query.Query.class)
                     .setResultTransformer(Transformers.aliasToBean(tClass))
                     .getResultList();
@@ -209,5 +226,11 @@ public class CatalogosRepositoryImp implements ICatalogosRepository{
         String qry = "SELECT id_datasource AS id, datasource AS value, id_reporte_padre AS idParent  FROM kpi_tech.catalogo_datasource";
         return executeListQuery(qry, DatasourcesResponse.class);
 
+    }
+
+    @Override
+    public List<PeriodosReporteResponse> getPeriodosPorReporte(String value) {
+        String qry = "SELECT id_reporte AS idReporte, mes, anio FROM kpi_tech.reportes WHERE id_tipo_reporte=:value ORDER BY id_reporte DESC LIMIT 12";
+        return executeListQuery(qry, value, PeriodosReporteResponse.class);
     }
 }

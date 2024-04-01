@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tech.telefonicachile.kpibackendapi.dtos.internals.ObjectValueDto;
 import tech.telefonicachile.kpibackendapi.dtos.response.DatasourcesResponse;
+import tech.telefonicachile.kpibackendapi.dtos.response.PeriodosReporteResponse;
 import tech.telefonicachile.kpibackendapi.repository.ICatalogosRepository;
 
 import java.util.List;
@@ -20,5 +21,9 @@ public class CatalogoServices {
 
     public List<ObjectValueDto> getListReportTypes(){
         return catalogosRepository.getTipoReporte();
+    }
+
+    public List<PeriodosReporteResponse> getListPeriodosByReport(String filter){
+        return catalogosRepository.getPeriodosPorReporte(filter);
     }
 }
