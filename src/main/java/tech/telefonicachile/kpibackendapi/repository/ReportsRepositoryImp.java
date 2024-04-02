@@ -34,7 +34,7 @@ public class ReportsRepositoryImp implements IReportsRepository {
                 "INNER JOIN kpi_tech.reportes D ON A.id_reporte = D.id_reporte " +
                 "WHERE C.id_tipo_incidencia IN (1,2) AND D.id_tipo_reporte = 1 AND D.Mes = :mes AND D.anio = :anio " +
                 "AND B.id_grupo_asignacion NOT IN(15,2,1,17,21,16,20,9,7) " +
-                "GROUP BY B.id_grupo_asignacion, B.grupo_asignacion " +
+                "GROUP BY B.id_grupo_asignacion, B.grupo_asignacion, A.id_reporte " +
                 "ORDER BY B.grupo_asignacion ASC";
 
         return (List<RptTotalesIncReqResponse>) entityManager.createNativeQuery(qry)
