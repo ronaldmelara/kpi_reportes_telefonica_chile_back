@@ -4,19 +4,21 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @NoArgsConstructor
 @Data
 @Builder
 public class RptTiemposUrgenciaIncReqResponse {
     Integer idUrgencia;
     String urgencia;
-    String promedioIncidentes;
-    String promedioRequerimientos;
-    String promedioTotal;
-    Long minInc;
-    Long minReq;
+    java.sql.Time promedioIncidentes;
+    java.sql.Time promedioRequerimientos;
+    java.sql.Time promedioTotal;
+    BigDecimal minInc;
+    BigDecimal minReq;
 
-    public RptTiemposUrgenciaIncReqResponse(Integer idUrgencia, String urgencia, String promedioIncidentes, String promedioRequerimientos, String promedioTotal, Long minInc, Long minReq) {
+    public RptTiemposUrgenciaIncReqResponse(Integer idUrgencia, String urgencia, java.sql.Time promedioIncidentes, java.sql.Time promedioRequerimientos, java.sql.Time promedioTotal, BigDecimal minInc, BigDecimal minReq) {
         this.idUrgencia = idUrgencia;
         this.urgencia = urgencia;
         this.promedioIncidentes = promedioIncidentes;
