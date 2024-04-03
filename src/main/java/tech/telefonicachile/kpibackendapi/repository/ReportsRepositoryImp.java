@@ -148,27 +148,27 @@ public class ReportsRepositoryImp implements IReportsRepository {
         String qry = "SELECT " +
                 "DISTINCT B.id_grupo_asignacion AS idGrupoAsignacion, B.grupo_asignacion AS grupoAsignacion, " +
                 "(SELECT  " +
-                "CAST(sec_to_time(AVG(TIME_TO_SEC(A1.sla))) AS char) " +
+                "sec_to_time(AVG(TIME_TO_SEC(A1.sla))) " +
                 "FROM kpi_tech.incidencias_requerimientos A1  " +
                 "WHERE A1.id_grupo_asignacion  = B.id_grupo_asignacion AND A1.id_tipo_incidencia = 2 AND A1.id_reporte = A.id_reporte " +
                 "group by A1.id_grupo_asignacion) AS promedioIncidentes, " +
                 "(SELECT " +
-                "CAST(sec_to_time(AVG(TIME_TO_SEC(A1.sla))) AS char) " +
+                "sec_to_time(AVG(TIME_TO_SEC(A1.sla))) " +
                 "FROM kpi_tech.incidencias_requerimientos A1  " +
                 "WHERE A1.id_grupo_asignacion  = B.id_grupo_asignacion AND A1.id_tipo_incidencia = 1 AND A1.id_reporte = A.id_reporte " +
                 "group by A1.id_grupo_asignacion) AS promedioRequerimientos, " +
                 "(SELECT " +
-                "CAST(sec_to_time(AVG(TIME_TO_SEC(A1.sla))) as char) " +
+                "sec_to_time(AVG(TIME_TO_SEC(A1.sla)))  " +
                 "FROM kpi_tech.incidencias_requerimientos A1  " +
                 "WHERE A1.id_grupo_asignacion  = B.id_grupo_asignacion AND A1.id_tipo_incidencia IN (1,2) AND A1.id_reporte = A.id_reporte " +
                 "group by A1.id_grupo_asignacion) AS promedioTotal, " +
                 "(SELECT  " +
-                " CAST((AVG(TIME_TO_SEC(A1.sla)) / 86400) * 1440 as float) " +
+                " (AVG(TIME_TO_SEC(A1.sla)) / 86400) * 1440  " +
                 "FROM kpi_tech.incidencias_requerimientos A1  " +
                 "WHERE A1.id_grupo_asignacion  = B.id_grupo_asignacion AND A1.id_tipo_incidencia = 2 AND A1.id_reporte = A.id_reporte " +
                 "group by A1.id_grupo_asignacion) AS minInc, " +
                 "(SELECT  " +
-                " cast((AVG(TIME_TO_SEC(A1.sla)) / 86400) * 1440 as float) " +
+                " (AVG(TIME_TO_SEC(A1.sla)) / 86400) * 1440  " +
                 "FROM kpi_tech.incidencias_requerimientos A1  " +
                 "WHERE A1.id_grupo_asignacion  = B.id_grupo_asignacion AND A1.id_tipo_incidencia = 1 AND A1.id_reporte = A.id_reporte " +
                 "group by A1.id_grupo_asignacion) as minReq " +
