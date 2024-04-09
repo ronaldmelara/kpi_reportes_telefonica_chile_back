@@ -33,7 +33,7 @@ public class ReportsRepositoryImp implements IReportsRepository {
                 "INNER JOIN kpi_tech.catalogo_tipo_incidencia C ON A.id_tipo_incidencia = C.id_tipo_incidencia " +
                 "INNER JOIN kpi_tech.reportes D ON A.id_reporte = D.id_reporte " +
                 "WHERE C.id_tipo_incidencia IN (1,2) AND D.id_tipo_reporte = 1 AND D.Mes = :mes AND D.anio = :anio " +
-                "AND B.id_grupo_asignacion NOT IN(15,2,1,17,21,16,20,9,7) " +
+                "AND B.id_grupo_asignacion NOT IN(15,2,1,17,21,16,20,9,7,25,12) " +
                 "GROUP BY B.id_grupo_asignacion, B.grupo_asignacion, A.id_reporte " +
                 "ORDER BY B.grupo_asignacion ASC";
 
@@ -57,7 +57,7 @@ public class ReportsRepositoryImp implements IReportsRepository {
                 "INNER JOIN kpi_tech.catalogo_tipo_incidencia C ON A.id_tipo_incidencia = C.id_tipo_incidencia " +
                 "INNER JOIN kpi_tech.reportes D ON A.id_reporte = D.id_reporte " +
                 "WHERE A.id_estado_ticket = 1 AND A.req_cumple_kpi = 1  AND D.id_tipo_reporte = 1 AND D.Mes = :mes AND D.anio = :anio " +
-                "AND B.id_grupo_asignacion NOT IN(15,2,1,17,21,16,20,9,7) " +
+                "AND B.id_grupo_asignacion NOT IN(15,2,1,17,21,16,20,9,7,25,12) " +
                 "group by B.id_grupo_asignacion, B.grupo_asignacion " +
                 "ORDER BY B.grupo_asignacion ASC";
 
@@ -131,7 +131,7 @@ public class ReportsRepositoryImp implements IReportsRepository {
                 "WHERE C.id_tipo_incidencia IN (1,2) " +
                 "AND B.id_grupo_asignacion NOT IN(8,15,2,1,17,21,16,20,9,7, 12, 24, 4,5, 25) AND D.id_tipo_reporte = 1 AND D.Mes = :mes AND D.anio = :anio " +
                 "group by B.id_grupo_asignacion, B.grupo_asignacion,C.id_tipo_incidencia, A.id_reporte " +
-                "ORDER BY B.id_grupo_asignacion ASC";
+                "ORDER BY B.grupo_asignacion ASC";
 
         return (List<RptTiemposIncReqResponse>) entityManager.createNativeQuery(qry)
                 .setParameter("anio", anio)
@@ -179,7 +179,7 @@ public class ReportsRepositoryImp implements IReportsRepository {
                 "WHERE C.id_tipo_incidencia IN (1,2) " +
                 "AND B.id_grupo_asignacion IN(1,2, 15,16,17,21,7,9,20) AND D.id_tipo_reporte = 1 AND D.Mes = :mes AND D.anio = :anio " +
                 "group by B.id_grupo_asignacion, B.grupo_asignacion,C.id_tipo_incidencia, A.id_reporte " +
-                "ORDER BY B.id_grupo_asignacion ASC";
+                "ORDER BY B.grupo_asignacion ASC";
 
         return (List<RptTiemposIncReqResponse>) entityManager.createNativeQuery(qry)
                 .setParameter("anio", anio)
