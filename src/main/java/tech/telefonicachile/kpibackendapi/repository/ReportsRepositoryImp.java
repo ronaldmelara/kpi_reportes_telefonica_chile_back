@@ -196,27 +196,27 @@ public class ReportsRepositoryImp implements IReportsRepository {
         String qry = "SELECT " +
                 "DISTINCT B.id_grupo_asignacion AS idGrupoAsignacion, B.grupo_asignacion AS grupoAsignacion, " +
                 "(SELECT  " +
-                "CAST(sec_to_time(AVG(TIME_TO_SEC(A1.sla))) AS char) " +
+                "sec_to_time(AVG(TIME_TO_SEC(A1.sla))) " +
                 "FROM kpi_tech.incidencias_requerimientos A1  " +
                 "WHERE A1.id_grupo_asignacion  = B.id_grupo_asignacion AND A1.id_tipo_incidencia = 2 AND A1.id_reporte = A.id_reporte " +
                 "group by A1.id_grupo_asignacion) AS promedioIncidentes, " +
                 "(SELECT " +
-                "CAST(sec_to_time(AVG(TIME_TO_SEC(A1.sla))) AS char) " +
+                "sec_to_time(AVG(TIME_TO_SEC(A1.sla)))  " +
                 "FROM kpi_tech.incidencias_requerimientos A1  " +
                 "WHERE A1.id_grupo_asignacion  = B.id_grupo_asignacion AND A1.id_tipo_incidencia = 1 AND A1.id_reporte = A.id_reporte " +
                 "group by A1.id_grupo_asignacion) AS promedioRequerimientos, " +
                 "(SELECT " +
-                "CAST(sec_to_time(AVG(TIME_TO_SEC(A1.sla))) as char) " +
+                "sec_to_time(AVG(TIME_TO_SEC(A1.sla)))  " +
                 "FROM kpi_tech.incidencias_requerimientos A1  " +
                 "WHERE A1.id_grupo_asignacion  = B.id_grupo_asignacion AND A1.id_tipo_incidencia IN (1,2) AND A1.id_reporte = A.id_reporte " +
                 "group by A1.id_grupo_asignacion) AS promedioTotal, " +
                 "(SELECT  " +
-                " CAST((AVG(TIME_TO_SEC(A1.sla)) / 86400) * 1440 as float) " +
+                "(AVG(TIME_TO_SEC(A1.sla)) / 86400) * 1440 " +
                 "FROM kpi_tech.incidencias_requerimientos A1  " +
                 "WHERE A1.id_grupo_asignacion  = B.id_grupo_asignacion AND A1.id_tipo_incidencia = 2 AND A1.id_reporte = A.id_reporte " +
                 "group by A1.id_grupo_asignacion) AS minInc, " +
                 "(SELECT  " +
-                " cast((AVG(TIME_TO_SEC(A1.sla)) / 86400) * 1440 as float) " +
+                "(AVG(TIME_TO_SEC(A1.sla)) / 86400) * 1440 " +
                 "FROM kpi_tech.incidencias_requerimientos A1  " +
                 "WHERE A1.id_grupo_asignacion  = B.id_grupo_asignacion AND A1.id_tipo_incidencia = 1 AND A1.id_reporte = A.id_reporte " +
                 "group by A1.id_grupo_asignacion) as minReq " +
@@ -227,7 +227,7 @@ public class ReportsRepositoryImp implements IReportsRepository {
                 "WHERE C.id_tipo_incidencia IN (1,2) " +
                 "AND B.id_grupo_asignacion IN(8,24,4,5) AND D.id_tipo_reporte = 1 AND D.Mes = :mes AND D.anio = :anio " +
                 "group by B.id_grupo_asignacion, B.grupo_asignacion,C.id_tipo_incidencia, A.id_reporte " +
-                "ORDER BY B.id_grupo_asignacion ASC";
+                "ORDER BY B.grupo_asignacion ASC";
 
         return (List<RptTiemposIncReqResponse>) entityManager.createNativeQuery(qry)
                 .setParameter("anio", anio)
