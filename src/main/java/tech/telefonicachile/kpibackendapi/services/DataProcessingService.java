@@ -9,6 +9,7 @@ import tech.telefonicachile.kpibackendapi.entities.Incidente;
 import tech.telefonicachile.kpibackendapi.entities.TemporalIncidente;
 import tech.telefonicachile.kpibackendapi.helper.EnumDatasource;
 import tech.telefonicachile.kpibackendapi.repository.ICatalogosRepository;
+import tech.telefonicachile.kpibackendapi.repository.ImportRepository;
 import tech.telefonicachile.kpibackendapi.repository.IncidentesRepository;
 
 
@@ -25,6 +26,9 @@ public class DataProcessingService {
     @Autowired
     private ICatalogosRepository catalogosRepository;
 
+    @Autowired
+    private ImportRepository importRepository;
+
     final int TIEMPO_1HRS = 1;
     final int TIEMPO_4HRS = 4;
     final int TIEMPO_8HRS = 8;
@@ -40,7 +44,9 @@ public class DataProcessingService {
     final Integer ID_URGENCIA_BAJA = 4;
 
 
-    public void dataProcessIncidentesRequerimientos(int idReporte, EnumDatasource source, ImportServices importServices){
+    public void dataProcessIncidentesRequerimientos(int idReporte, EnumDatasource source, ImportServices importServices, int idCarga){
+
+        importRepository.updateImportStatus( 2, idCarga, "Procesando datos...");
 
         List<TemporalIncidente> dataRaw = importServices.getDataImported();
 

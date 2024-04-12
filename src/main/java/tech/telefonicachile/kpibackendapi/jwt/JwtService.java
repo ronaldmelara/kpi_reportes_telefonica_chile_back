@@ -35,7 +35,7 @@ public class JwtService {
         LocalDateTime now = LocalDateTime.now();
 
         // Sumar 24 minutos
-        LocalDateTime result = now.plus(40, ChronoUnit.MINUTES);
+        LocalDateTime result = now.plus(60, ChronoUnit.MINUTES);
 
         return Jwts
                 .builder()

@@ -67,7 +67,7 @@ public class ImportServices {
 
 
 
-        bulkData(request.getIdDatasource(), "C:\\DEV\\Docs\\" + request.getNombreArchivo(), ((int)(objRpt.getFirst())[0] ));
+        bulkData(request.getIdDatasource(), "C:\\DEV\\Docs\\" + request.getNombreArchivo(), ((int)(objRpt.getFirst())[0]), nuevaCarga.getIdCarga());
 
         //excelDataToListCloudServices("C:\\DEV\\Docs\\" + cargaDatos.getIdCarga() + ".xlsx", cargaDatos.getIdCarga() );
 
@@ -131,7 +131,7 @@ public class ImportServices {
 
     }
 
-    private void bulkData(int typeFile, String fileLocation, int idReporte){
+    private void bulkData(int typeFile, String fileLocation, int idReporte, int idCarga){
 
         EnumDatasource selected = null;
         if(typeFile == 1){ selected = EnumDatasource.REMEDY_INC_ING_SISTEMAS; }
@@ -154,12 +154,14 @@ public class ImportServices {
                     break;
             }
             if(totRows>0){
-                dataProcessingService.dataProcessIncidentesRequerimientos(idReporte,selected,this);
+                dataProcessingService.dataProcessIncidentesRequerimientos(idReporte,selected,this, idCarga);
+                importRepository.updateImportStatus( 1,idCarga, "Proceso completado");
             }
 
         }catch (Exception ex){
             System.out.println("Excepción al extraer datos.");
             System.out.println(ex.getMessage());
+            importRepository.updateImportStatus(4,idCarga, "Proceso con errores.");
         }
 
     }

@@ -1,6 +1,8 @@
 package tech.telefonicachile.kpibackendapi.repository;
 
 import tech.telefonicachile.kpibackendapi.dtos.internals.ObjectValueDto;
+import tech.telefonicachile.kpibackendapi.dtos.response.DatasourcesResponse;
+import tech.telefonicachile.kpibackendapi.dtos.response.PeriodosReporteResponse;
 
 import java.util.List;
 
@@ -21,4 +23,7 @@ public interface ICatalogosRepository {
     void createCatpresol1(String value);
     void createCatpresol2(String value);
     void createGrupoPropietario(String value);
+    List<ObjectValueDto> getTipoReporte();
+    List<DatasourcesResponse> getDatasource();
+    List<PeriodosReporteResponse> getPeriodosPorReporte(String value);
 }
