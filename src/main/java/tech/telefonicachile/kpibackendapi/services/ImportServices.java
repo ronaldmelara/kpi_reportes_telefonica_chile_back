@@ -67,7 +67,7 @@ public class ImportServices {
 
 
 
-        bulkData(request.getIdDatasource(), "C:\\DEV\\Docs\\" + request.getNombreArchivo(), ((int)(objRpt.getFirst())[0] ));
+        bulkData(request.getIdDatasource(), "C:\\DEV\\Docs\\" + request.getNombreArchivo(), ((int)(objRpt.getFirst())[0]), nuevaCarga.getIdCarga());
 
         //excelDataToListCloudServices("C:\\DEV\\Docs\\" + cargaDatos.getIdCarga() + ".xlsx", cargaDatos.getIdCarga() );
 
@@ -131,7 +131,7 @@ public class ImportServices {
 
     }
 
-    private void bulkData(int typeFile, String fileLocation, int idReporte){
+    private void bulkData(int typeFile, String fileLocation, int idReporte, int idCarga){
 
         EnumDatasource selected = null;
         if(typeFile == 1){ selected = EnumDatasource.REMEDY_INC_ING_SISTEMAS; }
@@ -154,12 +154,14 @@ public class ImportServices {
                     break;
             }
             if(totRows>0){
-                dataProcessingService.dataProcessIncidentesRequerimientos(idReporte,selected,this);
+                dataProcessingService.dataProcessIncidentesRequerimientos(idReporte,selected,this, idCarga);
+                importRepository.updateImportStatus( 1,idCarga, "Proceso completado");
             }
 
         }catch (Exception ex){
             System.out.println("Excepción al extraer datos.");
             System.out.println(ex.getMessage());
+            importRepository.updateImportStatus(4,idCarga, "Proceso con errores.");
         }
 
     }
@@ -215,39 +217,46 @@ public class ImportServices {
 
         List<TemporalIncidente> finalRows = new ArrayList();
         try{
-            List<IncFileExternalDTO> rows = Poiji.fromExcel(new File(fileLocation), IncFileExternalDTO.class);
+            PoijiOptions options = PoijiOptions.PoijiOptionsBuilder.settings()
+                    .headerStart(0)
+                    .build();
+
+            List<IncFileExternalDTO> rows = Poiji.fromExcel(new File(fileLocation), IncFileExternalDTO.class, options);
 
             for(IncFileExternalDTO row : rows){
+                if(!row.getTicket().isEmpty() && row.getTicket().startsWith("INC")) {
+                    TemporalIncidente newRow = TemporalIncidente.builder()
+                            .e2e(StringUtils.trimToEmpty(row.getE2e()))
+                            .estado(StringUtils.trimToEmpty(row.getEstado()))
+                            .cliente(StringUtils.trimToEmpty(row.getCliente()))
+                            .catpresol2(StringUtils.trimToEmpty(row.getCatpresol2()))
+                            .catpresol1(StringUtils.trimToEmpty(row.getCatpresol1()))
+                            .fechaCierre(StringUtils.trimToEmpty(row.getFechaCierre()))
+                            .fechaEnvio(StringUtils.trimToEmpty(row.getFechaEnvio()))
+                            .fechaNotificacion(StringUtils.trimToEmpty(row.getFechaNotificacion()))
+                            .notas(StringUtils.trimToEmpty(row.getNotas()))
+                            .grupoAsignado(StringUtils.trimToEmpty(row.getGrupoAsignado()))
+                            .grupoPropietario(StringUtils.trimToEmpty(row.getGrupoPropietario()))
+                            .fechaUltimaResolucion(StringUtils.trimToEmpty(row.getFechaResolucion()))
+                            .impacto(StringUtils.trimToEmpty(row.getImpacto()))
+                            .pendiente(StringUtils.trimToEmpty(row.getPendiente()))
+                            .prioridad(StringUtils.trimToEmpty(row.getPrioridad()))
+                            .remitente(StringUtils.trimToEmpty(row.getRemitente()))
+                            .sla(StringUtils.trimToEmpty(row.getSla()))
+                            .resolucion(StringUtils.trimToEmpty(row.getResolucion()))
+                            .sla(StringUtils.trimToEmpty(row.getSla()))
+                            .resumen(StringUtils.trimToEmpty(row.getResumen()))
+                            .responsable(StringUtils.trimToEmpty(row.getResponsable()))
+                            .servicio(StringUtils.trimToEmpty(row.getServicio()))
+                            .ticket(StringUtils.trimToEmpty(row.getTicket()))
+                            .tipoIncidencia(StringUtils.trimToEmpty(row.getTipoIncidencia()))
+                            .urgencia(StringUtils.trimToEmpty(row.getUrgencia()))
+                            .prioridad(StringUtils.trimToEmpty(row.getPrioridad()))
+                            .build();
+                    finalRows.add(newRow);
+                }
 
-                TemporalIncidente newRow = TemporalIncidente.builder()
-                        .e2e(StringUtils.trimToEmpty(row.getE2e()))
-                        .estado(StringUtils.trimToEmpty(row.getEstado()))
-                        .cliente(StringUtils.trimToEmpty(row.getCliente()))
-                        .catpresol2(StringUtils.trimToEmpty(row.getCatpresol2()))
-                        .catpresol1(StringUtils.trimToEmpty(row.getCatpresol1()))
-                        .fechaCierre(StringUtils.trimToEmpty(row.getFechaCierre()))
-                        .fechaEnvio(StringUtils.trimToEmpty(row.getFechaEnvio()))
-                        .fechaNotificacion(StringUtils.trimToEmpty(row.getFechaNotificacion()))
-                        .notas(StringUtils.trimToEmpty(row.getNotas()))
-                        .grupoAsignado(StringUtils.trimToEmpty(row.getGrupoAsignado()))
-                        .grupoPropietario(StringUtils.trimToEmpty(row.getGrupoPropietario()))
-                        .fechaUltimaResolucion(StringUtils.trimToEmpty(row.getFechaResolucion()))
-                        .impacto(StringUtils.trimToEmpty(row.getImpacto()))
-                        .pendiente(StringUtils.trimToEmpty(row.getPendiente()))
-                        .prioridad(StringUtils.trimToEmpty(row.getPrioridad()))
-                        .remitente(StringUtils.trimToEmpty(row.getRemitente()))
-                        .sla(StringUtils.trimToEmpty(row.getSla()))
-                        .resolucion(StringUtils.trimToEmpty(row.getResolucion()))
-                        .sla(StringUtils.trimToEmpty(row.getSla()))
-                        .resumen(StringUtils.trimToEmpty(row.getResumen()))
-                        .responsable(StringUtils.trimToEmpty(row.getResponsable()))
-                        .servicio(StringUtils.trimToEmpty(row.getServicio()))
-                        .ticket(StringUtils.trimToEmpty(row.getTicket()))
-                        .tipoIncidencia(StringUtils.trimToEmpty(row.getTipoIncidencia()))
-                        .urgencia(StringUtils.trimToEmpty(row.getUrgencia()))
-                        .prioridad(StringUtils.trimToEmpty(row.getPrioridad()))
-                        .build();
-                finalRows.add(newRow);
+
                 //fileCloudServicesRepository.saveAll(newRow);
             }
             return saveAllRowsIncReport(finalRows);

@@ -13,6 +13,5 @@ public class KpiBackendApiApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(KpiBackendApiApplication.class, args);
 	}
-
 }
 

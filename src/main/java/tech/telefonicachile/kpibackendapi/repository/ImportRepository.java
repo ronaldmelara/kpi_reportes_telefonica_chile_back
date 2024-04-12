@@ -25,14 +25,14 @@ public interface ImportRepository extends JpaRepository<ImportLog,Long> {
     List<Object[]> getListImports();
 
 
-//    @Transactional
-//    @Modifying
-//    @Query(value="UPDATE smart10.cargaimportacion SET id_estado_importacion = :id_estado_importacion, fecha_importacion="
-//            +"CASE WHEN fecha_importacion IS NULL THEN CURRENT_TIMESTAMP ELSE fecha_importacion END, "
-//            +"resumen_importacion = :resumen WHERE id_carga = :idCarga", nativeQuery = true)
-//    int updateImportStatus(@Param("id_estado_importacion") Integer id_estado_importacion,
-//                            @Param("idCarga") Integer idCarga,
-//                            @Param("resumen") String resumen);
+    @Transactional
+    @Modifying
+    @Query(value="UPDATE kpi_tech.log_importacion SET id_estado_importacion = :id_estado_importacion, fecha_importacion="
+            +"CASE WHEN fecha_importacion IS NULL THEN CURRENT_TIMESTAMP ELSE fecha_importacion END, "
+            +"resumen_importacion = :resumen WHERE id_carga = :idCarga", nativeQuery = true)
+    int updateImportStatus(@Param("id_estado_importacion") Integer id_estado_importacion,
+                            @Param("idCarga") Integer idCarga,
+                            @Param("resumen") String resumen);
 
 
     @Query(value = "SELECT id_reporte, cerrado FROM kpi_tech.reportes WHERE id_tipo_reporte=:idTipoReporte AND mes=:mes AND anio=:anio ORDER BY id_reporte LIMIT 1", nativeQuery = true)

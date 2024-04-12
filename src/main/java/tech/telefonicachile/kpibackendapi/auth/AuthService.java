@@ -1,6 +1,8 @@
 package tech.telefonicachile.kpibackendapi.auth;
 
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,12 +14,15 @@ import tech.telefonicachile.kpibackendapi.user.Role;
 import tech.telefonicachile.kpibackendapi.user.User;
 
 @Service
-@RequiredArgsConstructor
+@NoArgsConstructor(force = true)
 public class AuthService {
-
+    @Autowired
     private final UserRepository usuarioRepository;
+    @Autowired
     private final JwtService jwtService;
+    @Autowired
     private final PasswordEncoder passwordEncoder;
+    @Autowired
     private final AuthenticationManager authenticationManager;
 
     public AuthResponse login (LoginRequest request){
