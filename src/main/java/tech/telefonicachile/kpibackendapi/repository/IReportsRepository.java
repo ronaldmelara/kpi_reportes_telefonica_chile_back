@@ -14,4 +14,7 @@ public interface IReportsRepository {
     List<RptTiemposIncReqResponse> getTiempoRestauracionIncReqServiceDelivery(int mes, int anio);
     List<RptTotalesIncPrioridadResponse> getTotalIncidentesPorPrioridad(int mes, int anio);
     List<RptTiemposUrgenciaIncReqResponse> getUrgenciaIncReq(int mes, int anio);
+    List<RptTiemposUrgenciaGroupIncReqResponse> getUrgenciaServiceDeliveryIncReq(int mes, int anio);
+    List<RptTiemposUrgenciaGroupIncReqResponse> getUrgenciaServiceManagedIncReq(int mes, int anio);
+    List<RptTiemposUrgenciaGroupIncReqResponse> getUrgenciaServiceCloudIncReq(int mes, int anio);
 }

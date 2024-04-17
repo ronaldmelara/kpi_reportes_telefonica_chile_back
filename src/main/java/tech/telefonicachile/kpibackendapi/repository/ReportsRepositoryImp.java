@@ -243,7 +243,7 @@ public class ReportsRepositoryImp implements IReportsRepository {
 
         String qry = "SELECT \n" +
                 "DISTINCT  B.id_grupo_asignacion AS idGrupoAsignacion, B.grupo_asignacion AS grupoAsignacion, D.id_prioridad AS idPrioridad, D.prioridad, \n" +
-                "(SELECT COUNT(A1.id_urgencia) FROM kpi_tech.incidencias_requerimientos A1 \n" +
+                "(SELECT COUNT(A1.id_prioridad) FROM kpi_tech.incidencias_requerimientos A1 \n" +
                 "INNER JOIN kpi_tech.catalogo_grupo_asignado B1 ON A1.id_grupo_asignacion = B1.id_grupo_asignacion \n" +
                 "INNER JOIN kpi_tech.catalogo_estado_ticket C1 ON A1.id_estado_ticket = C1.id_estado_ticket \n" +
                 "INNER JOIN kpi_tech.catalogo_tipo_incidencia D1 ON A1.id_tipo_incidencia = D1.id_tipo_incidencia \n" +
@@ -274,15 +274,15 @@ public class ReportsRepositoryImp implements IReportsRepository {
         String qry = "SELECT \n" +
                 "DISTINCT D.id_urgencia AS idUrgencia, D.urgencia, \n" +
                 "(SELECT \n" +
-                "CAST(sec_to_time(AVG(TIME_TO_SEC(A1.sla))) as char) \n" +
+                "sec_to_time(AVG(TIME_TO_SEC(A1.sla))) \n" +
                 "FROM kpi_tech.incidencias_requerimientos A1  \n" +
                 "WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia = 2 AND A1.id_reporte = E.id_reporte) AS promedioIncidentes, \n" +
                 "(SELECT \n" +
-                "CAST(sec_to_time(AVG(TIME_TO_SEC(A1.sla))) AS CHAR) \n" +
+                "sec_to_time(AVG(TIME_TO_SEC(A1.sla)))  \n" +
                 "FROM kpi_tech.incidencias_requerimientos A1  \n" +
                 "WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia = 1 AND A1.id_reporte = E.id_reporte) AS promedioRequerimientos, \n" +
                 "(SELECT \n" +
-                "CAST(sec_to_time(AVG(TIME_TO_SEC(A1.sla))) AS CHAR) \n" +
+                "sec_to_time(AVG(TIME_TO_SEC(A1.sla)))  \n" +
                 "FROM kpi_tech.incidencias_requerimientos A1   \n" +
                 "WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia IN (1,2)  AND A1.id_reporte = E.id_reporte) AS promedioTotal, \n" +
                 "(SELECT \n" +
@@ -305,6 +305,139 @@ public class ReportsRepositoryImp implements IReportsRepository {
                 .setParameter("mes", mes)
                 .unwrap(org.hibernate.query.Query.class)
                 .setResultTransformer(Transformers.aliasToBean(RptTiemposUrgenciaIncReqResponse.class))
+                .getResultList();
+    }
+
+
+    @Override
+    public List<RptTiemposUrgenciaGroupIncReqResponse> getUrgenciaServiceDeliveryIncReq(int mes, int anio){
+
+
+        String qry = "SELECT \n" +
+                "                DISTINCT  B.id_grupo_asignacion AS idGrupoAsignado, B.grupo_asignacion AS grupoAsignado, D.id_urgencia AS idUrgencia, D.urgencia, \n" +
+                "               (SELECT \n" +
+                "sec_to_time(AVG(TIME_TO_SEC(A1.sla))) \n" +
+                "FROM kpi_tech.incidencias_requerimientos A1  \n" +
+                "WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia = 2 AND A1.id_reporte = E.id_reporte AND A1.id_grupo_asignacion = B.id_grupo_asignacion) promedioIncidentes,\n" +
+                "(SELECT \n" +
+                "sec_to_time(AVG(TIME_TO_SEC(A1.sla))) \n" +
+                "FROM kpi_tech.incidencias_requerimientos A1  \n" +
+                "WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia = 1 AND A1.id_reporte = E.id_reporte  AND A1.id_grupo_asignacion = B.id_grupo_asignacion) promedioRequerimientos,\n" +
+                "(SELECT \n" +
+                "sec_to_time(AVG(TIME_TO_SEC(A1.sla))) \n" +
+                "FROM kpi_tech.incidencias_requerimientos A1   \n" +
+                "WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia IN (1,2)  AND A1.id_reporte = E.id_reporte  AND A1.id_grupo_asignacion = B.id_grupo_asignacion) promedioTotal,\n" +
+                "(SELECT \n" +
+                " (AVG(TIME_TO_SEC(A1.sla)) / 86400) * 1440\n" +
+                "FROM kpi_tech.incidencias_requerimientos A1  \n" +
+                "WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia = 2  AND A1.id_reporte = E.id_reporte  AND A1.id_grupo_asignacion = B.id_grupo_asignacion) minInc,\n" +
+                "(SELECT \n" +
+                " (AVG(TIME_TO_SEC(A1.sla)) / 86400) * 1440\n" +
+                "FROM kpi_tech.incidencias_requerimientos A1  \n" +
+                "WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia = 1  AND A1.id_reporte = E.id_reporte  AND A1.id_grupo_asignacion = B.id_grupo_asignacion) minReq\n" +
+                "                FROM kpi_tech.incidencias_requerimientos A \n" +
+                "                INNER JOIN kpi_tech.catalogo_grupo_asignado B ON A.id_grupo_asignacion = B.id_grupo_asignacion \n" +
+                "                INNER JOIN kpi_tech.catalogo_tipo_incidencia C ON A.id_tipo_incidencia = C.id_tipo_incidencia \n" +
+                "                INNER JOIN kpi_tech.catalogo_urgencias_tech D ON A.id_urgencia = D.id_urgencia \n" +
+                "                INNER JOIN kpi_tech.reportes E ON A.id_reporte = E.id_reporte \n" +
+                "                WHERE C.id_tipo_incidencia IN (1,2) AND E.id_tipo_reporte = 1 AND E.Mes = :mes AND E.anio = :anio \n" +
+                "                AND B.id_grupo_asignacion IN(8,24,4,5) \n" +
+                "                group by B.id_grupo_asignacion, B.grupo_asignacion, D.id_urgencia, D.urgencia ,E.id_reporte\n" +
+                "                ORDER BY D.id_urgencia, B.id_grupo_asignacion ASC;";
+
+        return (List<RptTiemposUrgenciaGroupIncReqResponse>) entityManager.createNativeQuery(qry)
+                .setParameter("anio", anio)
+                .setParameter("mes", mes)
+                .unwrap(org.hibernate.query.Query.class)
+                .setResultTransformer(Transformers.aliasToBean(RptTiemposUrgenciaGroupIncReqResponse.class))
+                .getResultList();
+    }
+
+    @Override
+    public List<RptTiemposUrgenciaGroupIncReqResponse> getUrgenciaServiceManagedIncReq(int mes, int anio){
+
+
+        String qry = "SELECT \n" +
+                "                DISTINCT  B.id_grupo_asignacion AS idGrupoAsignado, B.grupo_asignacion AS grupoAsignado, D.id_urgencia AS idUrgencia, D.urgencia, \n" +
+                "               (SELECT \n" +
+                "sec_to_time(AVG(TIME_TO_SEC(A1.sla))) \n" +
+                "FROM kpi_tech.incidencias_requerimientos A1  \n" +
+                "WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia = 2 AND A1.id_reporte = E.id_reporte AND A1.id_grupo_asignacion = B.id_grupo_asignacion) promedioIncidentes,\n" +
+                "(SELECT \n" +
+                "sec_to_time(AVG(TIME_TO_SEC(A1.sla))) \n" +
+                "FROM kpi_tech.incidencias_requerimientos A1  \n" +
+                "WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia = 1 AND A1.id_reporte = E.id_reporte  AND A1.id_grupo_asignacion = B.id_grupo_asignacion) promedioRequerimientos,\n" +
+                "(SELECT \n" +
+                "sec_to_time(AVG(TIME_TO_SEC(A1.sla))) \n" +
+                "FROM kpi_tech.incidencias_requerimientos A1   \n" +
+                "WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia IN (1,2)  AND A1.id_reporte = E.id_reporte  AND A1.id_grupo_asignacion = B.id_grupo_asignacion) promedioTotal,\n" +
+                "(SELECT \n" +
+                " (AVG(TIME_TO_SEC(A1.sla)) / 86400) * 1440\n" +
+                "FROM kpi_tech.incidencias_requerimientos A1  \n" +
+                "WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia = 2  AND A1.id_reporte = E.id_reporte  AND A1.id_grupo_asignacion = B.id_grupo_asignacion) minInc,\n" +
+                "(SELECT \n" +
+                " (AVG(TIME_TO_SEC(A1.sla)) / 86400) * 1440\n" +
+                "FROM kpi_tech.incidencias_requerimientos A1  \n" +
+                "WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia = 1  AND A1.id_reporte = E.id_reporte  AND A1.id_grupo_asignacion = B.id_grupo_asignacion) minReq\n" +
+                "                FROM kpi_tech.incidencias_requerimientos A \n" +
+                "                INNER JOIN kpi_tech.catalogo_grupo_asignado B ON A.id_grupo_asignacion = B.id_grupo_asignacion \n" +
+                "                INNER JOIN kpi_tech.catalogo_tipo_incidencia C ON A.id_tipo_incidencia = C.id_tipo_incidencia \n" +
+                "                INNER JOIN kpi_tech.catalogo_urgencias_tech D ON A.id_urgencia = D.id_urgencia \n" +
+                "                INNER JOIN kpi_tech.reportes E ON A.id_reporte = E.id_reporte \n" +
+                "                WHERE C.id_tipo_incidencia IN (1,2) AND E.id_tipo_reporte = 1 AND E.Mes = :mes AND E.anio = :anio \n" +
+                "                AND B.id_grupo_asignacion IN(1,2, 15,16,17,21,7,9,20) \n" +
+                "                group by B.id_grupo_asignacion, B.grupo_asignacion, D.id_urgencia, D.urgencia ,E.id_reporte\n" +
+                "                ORDER BY D.id_urgencia, B.id_grupo_asignacion ASC;";
+
+        return (List<RptTiemposUrgenciaGroupIncReqResponse>) entityManager.createNativeQuery(qry)
+                .setParameter("anio", anio)
+                .setParameter("mes", mes)
+                .unwrap(org.hibernate.query.Query.class)
+                .setResultTransformer(Transformers.aliasToBean(RptTiemposUrgenciaGroupIncReqResponse.class))
+                .getResultList();
+    }
+
+    @Override
+    public List<RptTiemposUrgenciaGroupIncReqResponse> getUrgenciaServiceCloudIncReq(int mes, int anio){
+
+
+        String qry = "SELECT \n" +
+                "                DISTINCT  B.id_grupo_asignacion AS idGrupoAsignado, B.grupo_asignacion AS grupoAsignado, D.id_urgencia AS idUrgencia, D.urgencia, \n" +
+                "               (SELECT \n" +
+                "sec_to_time(AVG(TIME_TO_SEC(A1.sla))) \n" +
+                "FROM kpi_tech.incidencias_requerimientos A1  \n" +
+                "WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia = 2 AND A1.id_reporte = E.id_reporte AND A1.id_grupo_asignacion = B.id_grupo_asignacion) promedioIncidentes,\n" +
+                "(SELECT \n" +
+                "sec_to_time(AVG(TIME_TO_SEC(A1.sla))) \n" +
+                "FROM kpi_tech.incidencias_requerimientos A1  \n" +
+                "WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia = 1 AND A1.id_reporte = E.id_reporte  AND A1.id_grupo_asignacion = B.id_grupo_asignacion) promedioRequerimientos,\n" +
+                "(SELECT \n" +
+                "sec_to_time(AVG(TIME_TO_SEC(A1.sla))) \n" +
+                "FROM kpi_tech.incidencias_requerimientos A1   \n" +
+                "WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia IN (1,2)  AND A1.id_reporte = E.id_reporte  AND A1.id_grupo_asignacion = B.id_grupo_asignacion) promedioTotal,\n" +
+                "(SELECT \n" +
+                " (AVG(TIME_TO_SEC(A1.sla)) / 86400) * 1440\n" +
+                "FROM kpi_tech.incidencias_requerimientos A1  \n" +
+                "WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia = 2  AND A1.id_reporte = E.id_reporte  AND A1.id_grupo_asignacion = B.id_grupo_asignacion) minInc,\n" +
+                "(SELECT \n" +
+                " (AVG(TIME_TO_SEC(A1.sla)) / 86400) * 1440\n" +
+                "FROM kpi_tech.incidencias_requerimientos A1  \n" +
+                "WHERE A1.id_urgencia  = D.id_urgencia AND A1.id_tipo_incidencia = 1  AND A1.id_reporte = E.id_reporte  AND A1.id_grupo_asignacion = B.id_grupo_asignacion) minReq\n" +
+                "                FROM kpi_tech.incidencias_requerimientos A \n" +
+                "                INNER JOIN kpi_tech.catalogo_grupo_asignado B ON A.id_grupo_asignacion = B.id_grupo_asignacion \n" +
+                "                INNER JOIN kpi_tech.catalogo_tipo_incidencia C ON A.id_tipo_incidencia = C.id_tipo_incidencia \n" +
+                "                INNER JOIN kpi_tech.catalogo_urgencias_tech D ON A.id_urgencia = D.id_urgencia \n" +
+                "                INNER JOIN kpi_tech.reportes E ON A.id_reporte = E.id_reporte \n" +
+                "                WHERE C.id_tipo_incidencia IN (1,2) AND E.id_tipo_reporte = 1 AND E.Mes = :mes AND E.anio = :anio \n" +
+                "                AND B.id_grupo_asignacion NOT IN(5,25,12, 8,4,24,15,2,1,17,21,16,20,9,7)  \n" +
+                "                group by B.id_grupo_asignacion, B.grupo_asignacion, D.id_urgencia, D.urgencia ,E.id_reporte\n" +
+                "                ORDER BY D.id_urgencia, B.id_grupo_asignacion ASC;";
+
+        return (List<RptTiemposUrgenciaGroupIncReqResponse>) entityManager.createNativeQuery(qry)
+                .setParameter("anio", anio)
+                .setParameter("mes", mes)
+                .unwrap(org.hibernate.query.Query.class)
+                .setResultTransformer(Transformers.aliasToBean(RptTiemposUrgenciaGroupIncReqResponse.class))
                 .getResultList();
     }
 

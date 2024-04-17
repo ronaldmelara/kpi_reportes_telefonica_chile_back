@@ -125,4 +125,42 @@ public class ReportsIncReqController {
             return ResponseEntity.ok(result);
         }
     }
+    @Operation(summary = "Reporte URGENCIA INCIDENTES Y REQUERIMIENTOS SERVICE DELIVERY", description = "Reporte URGENCIA INCIDENTES Y REQUERIMIENTOS SERVICE DELIVERY")
+    @GetMapping("/rpt09/{anio}/{mes}")
+    @ResponseBody
+    public ResponseEntity<List<RptTiemposUrgenciaGroupIncReqResponse>> getUrgenciaServiceDeliveryIncReq(@PathVariable int anio, @PathVariable int mes){
+        List<RptTiemposUrgenciaGroupIncReqResponse> result = reportsIncReqServices.getUrgenciaServiceDeliveryIncReq(mes, anio);
+
+        if(result.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }else{
+            return ResponseEntity.ok(result);
+        }
+    }
+
+    @Operation(summary = "Reporte URGENCIA INCIDENTES Y REQUERIMIENTOS MANAGED", description = "Reporte URGENCIA INCIDENTES Y REQUERIMIENTOS MANAGED")
+    @GetMapping("/rpt10/{anio}/{mes}")
+    @ResponseBody
+    public ResponseEntity<List<RptTiemposUrgenciaGroupIncReqResponse>> getUrgenciaServiceManagedIncReq(@PathVariable int anio, @PathVariable int mes){
+        List<RptTiemposUrgenciaGroupIncReqResponse> result = reportsIncReqServices.getUrgenciaServiceManagedIncReq(mes, anio);
+
+        if(result.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }else{
+            return ResponseEntity.ok(result);
+        }
+    }
+
+    @Operation(summary = "Reporte URGENCIA INCIDENTES Y REQUERIMIENTOS CLOUD", description = "Reporte URGENCIA INCIDENTES Y REQUERIMIENTOS CLOUD")
+    @GetMapping("/rpt11/{anio}/{mes}")
+    @ResponseBody
+    public ResponseEntity<List<RptTiemposUrgenciaGroupIncReqResponse>> getUrgenciaServiceCloudIncReq(@PathVariable int anio, @PathVariable int mes){
+        List<RptTiemposUrgenciaGroupIncReqResponse> result = reportsIncReqServices.getUrgenciaServiceCloudIncReq(mes, anio);
+
+        if(result.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }else{
+            return ResponseEntity.ok(result);
+        }
+    }
 }

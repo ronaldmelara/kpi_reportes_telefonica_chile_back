@@ -44,4 +44,16 @@ public class ReportsIncReqServices {
     public List<RptTiemposUrgenciaIncReqResponse> getUrgenciaIncReq(int mes, int anio){
         return reportsRepository.getUrgenciaIncReq(mes, anio);
     }
+
+    public List<RptTiemposUrgenciaGroupIncReqResponse> getUrgenciaServiceDeliveryIncReq(int mes, int anio){
+        return reportsRepository.getUrgenciaServiceDeliveryIncReq(mes, anio);
+    }
+
+    public List<RptTiemposUrgenciaGroupIncReqResponse> getUrgenciaServiceManagedIncReq(int mes, int anio){
+        return reportsRepository.getUrgenciaServiceManagedIncReq(mes, anio);
+    }
+
+    public List<RptTiemposUrgenciaGroupIncReqResponse> getUrgenciaServiceCloudIncReq(int mes, int anio){
+        return reportsRepository.getUrgenciaServiceCloudIncReq(mes, anio);
+    }
 }
