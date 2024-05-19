@@ -156,6 +156,7 @@ public class ImportServices {
             if(totRows>0){
                 dataProcessingService.dataProcessIncidentesRequerimientos(idReporte,selected,this, idCarga);
                 importRepository.updateImportStatus( 1,idCarga, "Proceso completado");
+                tmpIncidentesRepository.deleteAll();
             }
 
         }catch (Exception ex){
@@ -275,6 +276,7 @@ public class ImportServices {
 
     @Transactional
     private Integer saveAllRowsIncReport(List<TemporalIncidente> list){
+        tmpIncidentesRepository.deleteAll();
         List<TemporalIncidente> persistedRows = tmpIncidentesRepository.saveAll(list);
         return persistedRows.size();
     }

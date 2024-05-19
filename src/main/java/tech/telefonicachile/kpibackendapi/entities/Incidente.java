@@ -18,12 +18,6 @@ import org.hibernate.annotations.UuidGenerator;
 @Table(name="incidencias_requerimientos")
 public class Incidente {
 
-//    @Id
-//    @UuidGenerator
-//    @Column(name = "uuid2")
-//    private String id;
-
-
     @Column(name="id_reporte")
     Integer idReporte;
 

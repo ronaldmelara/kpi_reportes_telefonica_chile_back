@@ -16,6 +16,7 @@ import tech.telefonicachile.kpibackendapi.repository.IncidentesRepository;
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DataProcessingService {
@@ -43,6 +44,11 @@ public class DataProcessingService {
     final Integer ID_URGENCIA_MEDIA = 3;
     final Integer ID_URGENCIA_BAJA = 4;
 
+    public Incidente getTicket(String ticked){
+        Optional<Incidente> optEntity = incidentesRepository.findByTicket(ticked);
+        if (optEntity.isEmpty()) return null;
+        return optEntity.get();
+    }
 
     public void dataProcessIncidentesRequerimientos(int idReporte, EnumDatasource source, ImportServices importServices, int idCarga){
 

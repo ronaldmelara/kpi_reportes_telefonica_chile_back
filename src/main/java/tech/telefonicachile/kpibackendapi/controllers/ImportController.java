@@ -12,6 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 import tech.telefonicachile.kpibackendapi.dtos.request.ImportRequest;
 import tech.telefonicachile.kpibackendapi.entities.ImportLog;
 import tech.telefonicachile.kpibackendapi.dtos.response.ImportResponse;
+import tech.telefonicachile.kpibackendapi.entities.Incidente;
+import tech.telefonicachile.kpibackendapi.services.DataProcessingService;
 import tech.telefonicachile.kpibackendapi.services.ImportServices;
 
 import java.io.IOException;
@@ -26,6 +28,9 @@ public class ImportController {
 
     @Autowired
     private ImportServices importServices;
+
+    @Autowired
+    private DataProcessingService dataProcessingService;
 
     @Operation(summary = "Importar un archivo como insumo para reportes", description = "Importar un archivo como insumo para reportes")
     @PostMapping("")
@@ -68,14 +73,15 @@ public class ImportController {
         }
     }
 
-//    @GetMapping(value = "/loaded/{idCarga}")
-//    public ResponseEntity<List<TemporalIncidencias>> getLoadedDataByIdCarga(@PathVariable int idCarga){
-//        List<TemporalIncidencias> importedFileDTOS = importServices.getLoadedDataByIdCarga(idCarga);
-//
-//        if(importedFileDTOS.isEmpty()){
-//            return ResponseEntity.noContent().build();
-//        }else{
-//            return ResponseEntity.ok(importedFileDTOS);
-//        }
-//    }
+    @Operation(summary = "Obtener lista de archivos importados", description = "Obtener lista de archivos importados")
+    @GetMapping(value = "/ticket/{id}")
+    public ResponseEntity<Incidente> getLoadedDataByIdCarga(@PathVariable String id){
+        Incidente inc = dataProcessingService.getTicket(id);
+
+        if(inc == null){
+            return ResponseEntity.noContent().build();
+        }else{
+            return ResponseEntity.ok(inc);
+        }
+    }
 }
